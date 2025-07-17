@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -37,7 +38,8 @@ export function CarCard({ car }: CarCardProps) {
 
   const rentalDays = date?.from && date?.to ? differenceInCalendarDays(date.to, date.from) + 1 : 0;
   const totalPrice = rentalDays * car.pricePerDay;
-  const isRentable = car.details?.notes.some(n => n.includes('Mínimo de renta: 7 días')) ? rentalDays >= 7 : rentalDays > 0;
+  const requiresMin7Days = car.details?.notes.some(n => n.includes('Mínimo de renta: 7 días'));
+  const isRentable = rentalDays > 0 && (!requiresMin7Days || rentalDays >= 7);
   
   const handleRent = () => {
     if (!date?.from || !date?.to) {
@@ -109,7 +111,7 @@ export function CarCard({ car }: CarCardProps) {
         <div className="p-4">
             <div className="flex justify-between items-start">
               <CardTitle className="font-headline text-xl text-primary">{car.name}</CardTitle>
-              {car.details && (
+              {requiresMin7Days && (
                  <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -131,7 +133,14 @@ export function CarCard({ car }: CarCardProps) {
                 <Badge key={feature} variant="secondary">{feature}</Badge>
             ))}
         </div>
+        
+        <div className="flex justify-between items-center text-xl font-bold text-primary">
+            <span className="font-headline">Precio / día:</span>
+            <span>${car.pricePerDay}</span>
+        </div>
+
         <Separator />
+
         <div className="space-y-2">
           <h4 className="font-headline text-sm font-semibold text-primary">Elige las fechas</h4>
            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
@@ -178,10 +187,6 @@ export function CarCard({ car }: CarCardProps) {
         </div>
          {rentalDays > 0 && (
             <div className='p-3 bg-secondary/50 rounded-md'>
-                <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Precio por día</span>
-                    <span className="font-semibold">${car.pricePerDay}</span>
-                </div>
                  <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Días de renta</span>
                     <span className="font-semibold">{rentalDays}</span>
@@ -191,7 +196,7 @@ export function CarCard({ car }: CarCardProps) {
                     <span className="font-headline">Total</span>
                     <span>${totalPrice}</span>
                 </div>
-                 {car.details?.notes.some(n => n.includes('Mínimo de renta: 7 días')) && rentalDays < 7 && (
+                 {requiresMin7Days && rentalDays < 7 && (
                    <p className="text-destructive text-xs mt-2 text-center">
                       Este auto requiere un mínimo de 7 días de renta.
                    </p>
@@ -211,3 +216,4 @@ export function CarCard({ car }: CarCardProps) {
     </Card>
   );
 }
+
