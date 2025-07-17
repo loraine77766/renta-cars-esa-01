@@ -44,14 +44,14 @@ export const cars: Car[] = [
     pricePerDay: 80,
     imageUrl: 'https://images.unsplash.com/photo-1627589201884-245350324888?q=80&w=1964&auto=format&fit=crop',
     imageHint: 'sedan black luxury',
-    features: ['4 Puertas', 'Aire Acon-dicionado', 'Transmisión Automática', '5 Pasajeros'],
+    features: ['4 Puertas', 'Aire Acondicionado', 'Transmisión Automática', '5 Pasajeros'],
   },
   {
     id: 4,
     name: 'Kia Picanto',
     description: 'Pequeño, ágil y fácil de estacionar. La mejor opción para moverse por calles estrechas.',
     pricePerDay: 50,
-    imageUrl: 'https://images.unsplash.com/photo-1617469723732-d5462639e3a6?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1606555541819-0b135c364125?q=80&w=2070&auto=format&fit=crop',
     imageHint: 'hatchback blue',
     features: ['4 Puertas', '4 Pasajeros', 'Automático', 'Gasolina', 'Clima', 'Maletero', 'Seguro incluido'],
     details: {

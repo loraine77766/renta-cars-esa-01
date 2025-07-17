@@ -9,7 +9,7 @@ import { Calendar as CalendarIcon, Tag, Users, Car, Bookmark, CheckCircle, Alert
 import { useToast } from '@/hooks/use-toast';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 
-import type { Car, SavedRental } from '@/lib/types';
+import type { Car as CarType, SavedRental } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/tooltip"
 
 interface CarCardProps {
-  car: Car;
+  car: CarType;
 }
 
 export function CarCard({ car }: CarCardProps) {
