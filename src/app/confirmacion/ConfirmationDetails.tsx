@@ -18,9 +18,10 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, PartyPopper } from 'lucide-react';
 
 interface ConfirmationDetailsProps {
   car: Car;
@@ -93,6 +94,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formattedDates, setFormattedDates] = useState({ start: '', end: '' });
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -190,6 +192,7 @@ Combustible: $${FUEL_COST.toFixed(2)}
     `;
     const whatsappUrl = `https://wa.me/1825609725?text=${encodeURIComponent(message.trim())}`;
     window.open(whatsappUrl, '_blank');
+    setIsConfirmationDialogOpen(true);
   }
 
   const rentPrice = rentalDays * car.pricePerDay;
@@ -401,8 +404,25 @@ Combustible: $${FUEL_COST.toFixed(2)}
             </Card>
 
         </div>
+
+        <AlertDialog open={isConfirmationDialogOpen} onOpenChange={setIsConfirmationDialogOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <div className="flex justify-center items-center pb-4">
+                        <PartyPopper className="h-10 w-10 text-accent" />
+                    </div>
+                    <AlertDialogTitle className="text-center font-headline text-2xl text-primary">¡Muchas gracias por tu reserva!</AlertDialogTitle>
+                    <AlertDialogDescription className="text-center text-muted-foreground">
+                        Hemos recibido tu reserva con el resumen de tu pedido. Ponte en contacto para confirmar tu reservación y proceder con el pago. También te podrán responder a cualquier pregunta que puedas tener y resolver tus inquietudes sobre los detalles de tu pedido.
+                        <br/><br/>
+                        ¡Gracias por confiar en nosotros!
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogAction onClick={() => router.push('/')} className="bg-accent hover:bg-accent/90">
+                    Entendido
+                </AlertDialogAction>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }
-
-    
