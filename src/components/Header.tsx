@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Car, Bookmark } from 'lucide-react';
+import { Car, LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Header() {
@@ -13,9 +13,9 @@ export default function Header() {
           </Link>
           <nav>
             <Button variant="ghost" asChild>
-              <Link href="/mis-rentas" className="flex items-center gap-2">
-                <Bookmark className="h-4 w-4" />
-                <span>Mis Rentas</span>
+              <Link href="https://wa.me/18256097251" target="_blank" className="flex items-center gap-2">
+                <LifeBuoy className="h-4 w-4" />
+                <span>Soporte</span>
               </Link>
             </Button>
           </nav>
