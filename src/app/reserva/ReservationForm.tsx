@@ -34,9 +34,9 @@ const formSchema = z.object({
   dropoffTime: z.string().min(1, 'La hora de devolución es obligatoria.'),
 }).refine(data => {
     if (!data.pickupDate || !data.dropoffDate) return true;
-    return data.dropoffDate > data.pickupDate;
+    return data.dropoffDate >= data.pickupDate;
 }, {
-    message: 'La fecha de devolución debe ser posterior a la de recogida.',
+    message: 'La fecha de devolución debe ser posterior o igual a la de recogida.',
     path: ['dropoffDate'],
 });
 
@@ -63,8 +63,9 @@ export default function ReservationForm({ car }: { car: Car }) {
   const [rentalDays, setRentalDays] = useState(0);
   
   useEffect(() => {
-    if (pickupDate && dropoffDate && dropoffDate > pickupDate) {
-      setRentalDays(differenceInCalendarDays(dropoffDate, pickupDate) + 1);
+    if (pickupDate && dropoffDate && dropoffDate >= pickupDate) {
+      const days = differenceInCalendarDays(dropoffDate, pickupDate) + 1;
+      setRentalDays(days);
       trigger("dropoffDate");
     } else {
       setRentalDays(0);
@@ -216,7 +217,7 @@ export default function ReservationForm({ car }: { car: Car }) {
                                             mode="single"
                                             selected={field.value}
                                             onSelect={field.onChange}
-                                            disabled={(date) => !pickupDate || date <= pickupDate}
+                                            disabled={(date) => !pickupDate || date < pickupDate}
                                             initialFocus
                                         />
                                     </PopoverContent>
