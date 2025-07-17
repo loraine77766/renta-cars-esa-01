@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
@@ -19,10 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Info } from 'lucide-react';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ConfirmationDetailsProps {
   car: Car;
@@ -36,7 +33,9 @@ const formSchema = z.object({
   name: z.string().min(2, { message: 'El nombre es requerido.' }),
   lastName1: z.string().min(2, { message: 'El primer apellido es requerido.' }),
   lastName2: z.string().optional(),
-  birthDate: z.date({ required_error: 'La fecha de nacimiento es obligatoria.' }),
+  birthDay: z.string({ required_error: 'El día es obligatorio.'}),
+  birthMonth: z.string({ required_error: 'El mes es obligatorio.'}),
+  birthYear: z.string({ required_error: 'El año es obligatorio.'}),
   phone: z.string().min(5, { message: 'El teléfono es requerido.' }),
   country: z.string().min(2, { message: 'El país es requerido.' }),
   passport: z.string().min(5, { message: 'El número de pasaporte es requerido.' }),
@@ -55,6 +54,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
   const [formattedDates, setFormattedDates] = useState({ start: '', end: '' });
 
   useEffect(() => {
+    // This now runs only on the client, preventing hydration mismatch.
     setFormattedDates({
         start: format(startDate, "EEE dd/MM/yyyy - HH:mm", { locale: es }),
         end: format(endDate, "EEE dd/MM/yyyy - HH:mm", { locale: es }),
@@ -90,6 +90,10 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
   const rentPrice = rentalDays * car.pricePerDay;
   const insurancePrice = rentalDays * INSURANCE_PER_DAY;
   
+  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i);
+  const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: format(new Date(0, i), 'LLLL', { locale: es }) }));
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
   return (
     <div>
         <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4 text-center">Confirma tu Renta</h1>
@@ -114,35 +118,37 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
                                     <FormField control={form.control} name="lastName2" render={({ field }) => (
                                         <FormItem><FormLabel>2. Apellido</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
-                                     <FormField
-                                        control={form.control}
-                                        name="birthDate"
-                                        render={({ field }) => (
-                                        <FormItem className="flex flex-col">
-                                            <FormLabel>Fecha de nacimiento *</FormLabel>
-                                            <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                <Button variant={"outline"} className="pl-3 text-left font-normal">
-                                                    {field.value ? (format(field.value, "PPP", { locale: es })) : (<span>Elige una fecha</span>)}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) => date > new Date() || date < new Date("1920-01-01")}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                        )}
-                                    />
+                                     
+                                     <div className="md:col-span-2">
+                                        <FormLabel>Fecha de nacimiento *</FormLabel>
+                                        <div className="grid grid-cols-3 gap-2 mt-2">
+                                            <FormField control={form.control} name="birthDay" render={({ field }) => (
+                                                <FormItem>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl><SelectTrigger><SelectValue placeholder="Día" /></SelectTrigger></FormControl>
+                                                        <SelectContent>{days.map(day => <SelectItem key={day} value={String(day)}>{day}</SelectItem>)}</SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}/>
+                                            <FormField control={form.control} name="birthMonth" render={({ field }) => (
+                                                <FormItem>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl><SelectTrigger><SelectValue placeholder="Mes" /></SelectTrigger></FormControl>
+                                                        <SelectContent>{months.map(month => <SelectItem key={month.value} value={String(month.value)}>{month.label}</SelectItem>)}</SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}/>
+                                            <FormField control={form.control} name="birthYear" render={({ field }) => (
+                                                <FormItem>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl><SelectTrigger><SelectValue placeholder="Año" /></SelectTrigger></FormControl>
+                                                        <SelectContent>{years.map(year => <SelectItem key={year} value={String(year)}>{year}</SelectItem>)}</SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}/>
+                                        </div>
+                                         <FormMessage>{form.formState.errors.birthDay?.message || form.formState.errors.birthMonth?.message || form.formState.errors.birthYear?.message}</FormMessage>
+                                    </div>
                                     <FormField control={form.control} name="phone" render={({ field }) => (
                                         <FormItem><FormLabel>Teléfono *</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
