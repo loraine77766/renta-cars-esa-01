@@ -8,13 +8,16 @@ export default function Footer() {
         <p className="text-sm mb-2">
             RentCubaCar es una Agencia On-Line con asistencia telefónica donde te ayudamos a encontrar y rentar tu Auto en Cuba con los mejores precios del mercado.
         </p>
-        <div className="flex justify-center items-center gap-4 text-xs">
+        <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-2 text-xs">
             <p>&copy; {new Date().getFullYear()} rentacar. Todos los derechos reservados.</p>
             <Button variant="link" asChild className="p-0 h-auto">
                 <Link href="/terminos-y-condiciones">Términos y Condiciones</Link>
             </Button>
              <Button variant="link" asChild className="p-0 h-auto">
                 <Link href="/politica-de-privacidad">Política de Privacidad</Link>
+            </Button>
+            <Button variant="link" asChild className="p-0 h-auto">
+                <Link href="/politica-de-cookies">Política de Cookies</Link>
             </Button>
         </div>
       </div>
