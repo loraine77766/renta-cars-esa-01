@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'CubaRenta - Renta de Autos en Cuba',
+  title: 'rentacar - Renta de Autos en Cuba',
   description: 'La mejor opción para rentar autos en Cuba. Encuentra el vehículo perfecto para tu viaje.',
 };
 
