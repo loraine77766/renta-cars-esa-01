@@ -51,6 +51,7 @@ export const cars: Car[] = [
     name: 'Kia Picanto',
     description: 'Pequeño, ágil y fácil de estacionar. La mejor opción para moverse por calles estrechas.',
     pricePerDay: 50,
+    originalPricePerDay: 57,
     imageUrl: 'https://images.unsplash.com/photo-1606555541819-0b135c364125?q=80&w=2070&auto=format&fit=crop',
     imageHint: 'hatchback blue',
     features: ['4 Puertas', '4 Pasajeros', 'Automático', 'Gasolina', 'Clima', 'Maletero', 'Seguro incluido'],
@@ -74,7 +75,7 @@ export const cars: Car[] = [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
         'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
         'El precio final podría variar en dependencia de la disponibilidad y oferta.',
-        'Mínimo de renta: 7 días.'
+        'Mínimo de renta: 5 días.'
       ]
     }
   },

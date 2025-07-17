@@ -3,6 +3,7 @@ export type Car = {
   name: string;
   description: string;
   pricePerDay: number;
+  originalPricePerDay?: number;
   imageUrl: string;
   features: string[];
   imageHint: string;
