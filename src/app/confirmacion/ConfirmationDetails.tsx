@@ -19,7 +19,6 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Info } from 'lucide-react';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ConfirmationDetailsProps {
   car: Car;
@@ -33,9 +32,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: 'El nombre es requerido.' }),
   lastName1: z.string().min(2, { message: 'El primer apellido es requerido.' }),
   lastName2: z.string().optional(),
-  birthDay: z.string({ required_error: 'El día es obligatorio.'}),
-  birthMonth: z.string({ required_error: 'El mes es obligatorio.'}),
-  birthYear: z.string({ required_error: 'El año es obligatorio.'}),
+  birthDate: z.string().min(1, { message: 'La fecha de nacimiento es requerida.' }),
   phone: z.string().min(5, { message: 'El teléfono es requerido.' }),
   country: z.string().min(2, { message: 'El país es requerido.' }),
   passport: z.string().min(5, { message: 'El número de pasaporte es requerido.' }),
@@ -67,6 +64,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
       name: '',
       lastName1: '',
       lastName2: '',
+      birthDate: '',
       phone: '',
       country: '',
       passport: '',
@@ -90,10 +88,6 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
   const rentPrice = rentalDays * car.pricePerDay;
   const insurancePrice = rentalDays * INSURANCE_PER_DAY;
   
-  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i);
-  const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: format(new Date(0, i), 'LLLL', { locale: es }) }));
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
-
   return (
     <div>
         <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4 text-center">Confirma tu Renta</h1>
@@ -118,42 +112,14 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
                                     <FormField control={form.control} name="lastName2" render={({ field }) => (
                                         <FormItem><FormLabel>2. Apellido</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
-                                     
-                                     <div className="md:col-span-2">
-                                        <FormLabel>Fecha de nacimiento *</FormLabel>
-                                        <div className="grid grid-cols-3 gap-2 mt-2">
-                                            <FormField control={form.control} name="birthDay" render={({ field }) => (
-                                                <FormItem>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl><SelectTrigger><SelectValue placeholder="Día" /></SelectTrigger></FormControl>
-                                                        <SelectContent>{days.map(day => <SelectItem key={day} value={String(day)}>{day}</SelectItem>)}</SelectContent>
-                                                    </Select>
-                                                </FormItem>
-                                            )}/>
-                                            <FormField control={form.control} name="birthMonth" render={({ field }) => (
-                                                <FormItem>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl><SelectTrigger><SelectValue placeholder="Mes" /></SelectTrigger></FormControl>
-                                                        <SelectContent>{months.map(month => <SelectItem key={month.value} value={String(month.value)}>{month.label}</SelectItem>)}</SelectContent>
-                                                    </Select>
-                                                </FormItem>
-                                            )}/>
-                                            <FormField control={form.control} name="birthYear" render={({ field }) => (
-                                                <FormItem>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl><SelectTrigger><SelectValue placeholder="Año" /></SelectTrigger></FormControl>
-                                                        <SelectContent>{years.map(year => <SelectItem key={year} value={String(year)}>{year}</SelectItem>)}</SelectContent>
-                                                    </Select>
-                                                </FormItem>
-                                            )}/>
-                                        </div>
-                                         <FormMessage>{form.formState.errors.birthDay?.message || form.formState.errors.birthMonth?.message || form.formState.errors.birthYear?.message}</FormMessage>
-                                    </div>
+                                     <FormField control={form.control} name="birthDate" render={({ field }) => (
+                                        <FormItem><FormLabel>Fecha de nacimiento *</FormLabel><FormControl><Input placeholder="DD/MM/AAAA" {...field} /></FormControl><FormMessage /></FormItem>
+                                    )}/>
                                     <FormField control={form.control} name="phone" render={({ field }) => (
                                         <FormItem><FormLabel>Teléfono *</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
                                     <FormField control={form.control} name="country" render={({ field }) => (
-                                        <FormItem><FormLabel>País</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                        <FormItem><FormLabel>País *</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
                                     <FormField control={form.control} name="passport" render={({ field }) => (
                                         <FormItem><FormLabel>Pasaporte *</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
