@@ -32,7 +32,9 @@ const formSchema = z.object({
   name: z.string().min(2, { message: 'El nombre es requerido.' }),
   lastName1: z.string().min(2, { message: 'El primer apellido es requerido.' }),
   lastName2: z.string().optional(),
-  birthDate: z.string().min(1, { message: 'La fecha de nacimiento es requerida.' }),
+  birthDay: z.string().min(1, { message: 'Día requerido.' }).max(2),
+  birthMonth: z.string().min(1, { message: 'Mes requerido.' }).max(2),
+  birthYear: z.string().min(4, { message: 'Año requerido.' }).max(4),
   phone: z.string().min(5, { message: 'El teléfono es requerido.' }),
   country: z.string().min(2, { message: 'El país es requerido.' }),
   passport: z.string().min(5, { message: 'El número de pasaporte es requerido.' }),
@@ -64,7 +66,9 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
       name: '',
       lastName1: '',
       lastName2: '',
-      birthDate: '',
+      birthDay: '',
+      birthMonth: '',
+      birthYear: '',
       phone: '',
       country: '',
       passport: '',
@@ -112,9 +116,20 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
                                     <FormField control={form.control} name="lastName2" render={({ field }) => (
                                         <FormItem><FormLabel>2. Apellido</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
-                                     <FormField control={form.control} name="birthDate" render={({ field }) => (
-                                        <FormItem><FormLabel>Fecha de nacimiento *</FormLabel><FormControl><Input placeholder="DD/MM/AAAA" {...field} /></FormControl><FormMessage /></FormItem>
-                                    )}/>
+                                     <FormItem>
+                                        <FormLabel>Fecha de nacimiento *</FormLabel>
+                                        <div className="flex gap-2">
+                                            <FormField control={form.control} name="birthDay" render={({ field }) => (
+                                                <FormItem className="flex-1"><FormControl><Input placeholder="Día" {...field} /></FormControl><FormMessage /></FormItem>
+                                            )}/>
+                                            <FormField control={form.control} name="birthMonth" render={({ field }) => (
+                                                <FormItem className="flex-1"><FormControl><Input placeholder="Mes" {...field} /></FormControl><FormMessage /></FormItem>
+                                            )}/>
+                                            <FormField control={form.control} name="birthYear" render={({ field }) => (
+                                                <FormItem className="flex-1"><FormControl><Input placeholder="Año" {...field} /></FormControl><FormMessage /></FormItem>
+                                            )}/>
+                                        </div>
+                                    </FormItem>
                                     <FormField control={form.control} name="phone" render={({ field }) => (
                                         <FormItem><FormLabel>Teléfono *</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
