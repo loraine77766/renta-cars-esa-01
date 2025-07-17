@@ -1,0 +1,58 @@
+import type { Car } from './types';
+
+export const cars: Car[] = [
+  {
+    id: 1,
+    name: 'Geely CK',
+    description: 'Un sedán económico y confiable, ideal para recorrer la ciudad y sus alrededores.',
+    pricePerDay: 50,
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'sedan white',
+    features: ['4 Puertas', 'Aire Acondicionado', 'Transmisión Manual', '5 Pasajeros'],
+  },
+  {
+    id: 2,
+    name: 'MG 3',
+    description: 'Moderno y compacto, perfecto para parejas o viajeros solos que buscan eficiencia.',
+    pricePerDay: 60,
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'hatchback red',
+    features: ['5 Puertas', 'Aire Acondicionado', 'Transmisión Automática', '5 Pasajeros'],
+  },
+  {
+    id: 3,
+    name: 'BYD F3',
+    description: 'Un vehículo familiar espacioso con un rendimiento de combustible excelente.',
+    pricePerDay: 55,
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'sedan silver',
+    features: ['4 Puertas', 'Aire Acondicionado', 'Transmisión Manual', '5 Pasajeros'],
+  },
+  {
+    id: 4,
+    name: 'Kia Picanto',
+    description: 'Pequeño, ágil y fácil de estacionar. La mejor opción para moverse por calles estrechas.',
+    pricePerDay: 45,
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'hatchback blue',
+    features: ['5 Puertas', 'Aire Acondicionado', 'Transmisión Automática', '4 Pasajeros'],
+  },
+  {
+    id: 5,
+    name: 'Hyundai Grand i10',
+    description: 'Un hatchback versátil que combina comodidad y estilo para una experiencia de manejo superior.',
+    pricePerDay: 65,
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'hatchback white',
+    features: ['5 Puertas', 'Aire Acondicionado', 'Transmisión Automática', '5 Pasajeros'],
+  },
+  {
+    id: 6,
+    name: 'Geely Emgrand',
+    description: 'Un sedán de lujo con amplio espacio interior y todas las comodidades modernas.',
+    pricePerDay: 80,
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'sedan black luxury',
+    features: ['4 Puertas', 'Aire Acondicionado', 'Transmisión Automática', '5 Pasajeros'],
+  },
+];
