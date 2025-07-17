@@ -79,7 +79,7 @@ const generateTimeSlots = () => {
             const minute = j;
             const date = new Date();
             date.setHours(hour, minute);
-            slots.push(format(date, "hh:mm a"));
+            slots.push(format(date, "HH:mm"));
         }
     }
     return slots;
@@ -101,8 +101,8 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
       const startDateTimeStr = `${format(startDate, 'yyyy-MM-dd')} ${pickupTime}`;
       const endDateTimeStr = `${format(endDate, 'yyyy-MM-dd')} ${dropoffTime}`;
       
-      const startDateTime = parse(startDateTimeStr, 'yyyy-MM-dd hh:mm a', new Date());
-      const endDateTime = parse(endDateTimeStr, 'yyyy-MM-dd hh:mm a', new Date());
+      const startDateTime = parse(startDateTimeStr, 'yyyy-MM-dd HH:mm', new Date());
+      const endDateTime = parse(endDateTimeStr, 'yyyy-MM-dd HH:mm', new Date());
 
       if (!isNaN(startDateTime.getTime()) && !isNaN(endDateTime.getTime())) {
           setFormattedDates({

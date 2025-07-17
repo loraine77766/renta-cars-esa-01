@@ -5,7 +5,7 @@ import AiRecommender from '@/components/AiRecommender';
 import { CarList } from '@/components/CarList';
 import { cars } from '@/lib/cars';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquare, Clock, ShieldCheck, Info, Map, ListChecks, CalendarSearch, Car, User, CreditCard, MailCheck } from 'lucide-react';
+import { MessageSquare, Clock, ShieldCheck, ListChecks, Map, CalendarSearch, Car, User, CreditCard, MailCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -80,7 +80,7 @@ export default function Home() {
                ))}
            </div>
         </section>
-
+        
         <section id="cars" className="my-16">
           <h2 className="font-headline text-3xl font-bold text-center mb-8 text-primary">Autos Recomendados</h2>
           <CarList cars={recommendedCars} />

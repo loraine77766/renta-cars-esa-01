@@ -28,9 +28,13 @@ import RentalInfo from '../confirmacion/RentalInfo';
 const generateTimeSlots = () => {
     const slots: string[] = [];
     for (let i = 0; i < 24; i++) {
-        const hour = i % 12 === 0 ? 12 : i % 12;
-        const period = i < 12 ? 'AM' : 'PM';
-        slots.push(`${hour}:00 ${period}`);
+        for (let j = 0; j < 60; j += 30) {
+            const hour = i;
+            const minute = j;
+            const date = new Date();
+            date.setHours(hour, minute);
+            slots.push(format(date, "HH:mm"));
+        }
     }
     return slots;
 };
@@ -62,9 +66,9 @@ export default function ReservationForm({ car }: { car: Car }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       pickupLocation: '',
-      pickupTime: '10:00 AM',
+      pickupTime: '10:00',
       dropoffLocation: '',
-      dropoffTime: '10:00 AM',
+      dropoffTime: '10:00',
     }
   });
 
@@ -111,7 +115,7 @@ export default function ReservationForm({ car }: { car: Car }) {
             <CardTitle className="font-headline text-2xl text-primary">Completa los Datos de tu Reserva</CardTitle>
           </CardHeader>
           <CardContent>
-            <Alert variant="default" className="mb-6 bg-accent/20 border-accent">
+            <Alert variant="default" className="mb-6 bg-accent/20 border-accent dark:bg-accent/10">
                 <Info className="h-4 w-4 text-accent" />
                 <AlertTitle className="font-bold text-accent">Nota importante</AlertTitle>
                 <AlertDescription>
