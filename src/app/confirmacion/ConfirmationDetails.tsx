@@ -190,7 +190,7 @@ Combustible: $${FUEL_COST.toFixed(2)}
 -----------------------------------
 ¡Gracias!
     `;
-    const whatsappUrl = `https://wa.me/1825609725?text=${encodeURIComponent(message.trim())}`;
+    const whatsappUrl = `https://wa.me/18256097251?text=${encodeURIComponent(message.trim())}`;
     window.open(whatsappUrl, '_blank');
     setIsConfirmationDialogOpen(true);
   }
