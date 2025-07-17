@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -17,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Info } from 'lucide-react';
-import RentalInfo from './RentalInfo';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Calendar } from '@/components/ui/calendar';
@@ -52,6 +52,14 @@ const FUEL_COST = 59;
 export default function ConfirmationDetails({ car, startDate, endDate, rentalDays, totalPrice }: ConfirmationDetailsProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const [formattedDates, setFormattedDates] = useState({ start: '', end: '' });
+
+  useEffect(() => {
+    setFormattedDates({
+        start: format(startDate, "EEE dd/MM/yyyy - HH:mm", { locale: es }),
+        end: format(endDate, "EEE dd/MM/yyyy - HH:mm", { locale: es }),
+    });
+  }, [startDate, endDate]);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -188,11 +196,11 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
                             <TableRow><TableCell className="font-semibold p-1">Precio diario:</TableCell><TableCell className="p-1">${car.pricePerDay.toFixed(2)}</TableCell></TableRow>
                             <TableRow>
                                 <TableCell className="font-semibold p-1 align-top">Recogida:</TableCell>
-                                <TableCell className="p-1">{format(startDate, "EEE dd/MM/yyyy - HH:mm", { locale: es })}</TableCell>
+                                <TableCell className="p-1">{formattedDates.start || '...'}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className="font-semibold p-1 align-top">Devolución:</TableCell>
-                                <TableCell className="p-1">{format(endDate, "EEE dd/MM/yyyy - HH:mm", { locale: es })}</TableCell>
+                                <TableCell className="p-1">{formattedDates.end || '...'}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
