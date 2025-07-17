@@ -1,3 +1,4 @@
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AiRecommender from '@/components/AiRecommender';
@@ -82,7 +83,6 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3 text-muted-foreground list-disc list-inside">
-                  <li>Solo se reservan categorías, no marcas ni modelos.</li>
                   <li>Tener un mínimo de 21 y un máximo de 80 años de edad.</li>
                   <li>Licencia de conducción vigente con validez mínima de 2 años.</li>
                   <li>Pasaporte vigente y Voucher de su reserva impreso.</li>
