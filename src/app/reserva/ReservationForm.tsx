@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -103,8 +104,8 @@ export default function ReservationForm({ car }: { car: Car }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="lg:col-span-2 space-y-8">
         <Card>
           <CardHeader>
             <CardTitle className="font-headline text-2xl text-primary">Completa los Datos de tu Reserva</CardTitle>
@@ -315,5 +316,3 @@ export default function ReservationForm({ car }: { car: Car }) {
     </div>
   );
 }
-
-    
