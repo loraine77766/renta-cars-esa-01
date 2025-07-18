@@ -24,6 +24,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info, Calendar as CalendarIcon } from 'lucide-react';
 import RentalInfo from '../confirmacion/RentalInfo';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 const generateTimeSlots = () => {
     const slots: string[] = [];
@@ -100,6 +107,8 @@ export default function ReservationForm({ car }: { car: Car }) {
   const rentPrice = isDateRangeValid ? rentalDays * dailyPrice : 0;
   const insurancePrice = isDateRangeValid ? rentalDays * INSURANCE_PER_DAY : 0;
   const totalPrice = isDateRangeValid ? rentPrice + insurancePrice + FUEL_COST : 0;
+  
+  const imageList = car.imageUrls && car.imageUrls.length > 0 ? car.imageUrls : [car.imageUrl];
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const fromDate = format(values.pickupDate, 'yyyy-MM-dd');
@@ -278,9 +287,23 @@ export default function ReservationForm({ car }: { car: Car }) {
       <div className="space-y-8 lg:sticky lg:top-8 h-fit">
         <Card className="shadow-lg">
             <CardHeader className="p-0">
-                <div className="relative h-48 w-full">
-                    <Image src={car.imageUrl} alt={car.name} data-ai-hint={car.imageHint} fill className="object-cover" />
-                </div>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {imageList.map((img, index) => (
+                      <CarouselItem key={index}>
+                        <div className="relative h-56 w-full">
+                           <Image src={img} alt={`${car.name} - Imagen ${index + 1}`} data-ai-hint={car.imageHint} fill className="object-cover rounded-t-lg" />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {imageList.length > 1 && (
+                    <>
+                      <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
+                      <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
+                    </>
+                  )}
+                </Carousel>
                  <div className="p-6">
                     <CardTitle className="font-headline text-2xl text-primary mb-2">{car.name}</CardTitle>
                     <div className="flex flex-wrap gap-2">

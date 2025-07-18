@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -22,6 +23,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescript
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon, PartyPopper } from 'lucide-react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 interface ConfirmationDetailsProps {
   car: Car;
@@ -95,6 +103,8 @@ export default function ConfirmationDetails({ car, startDate, endDate, rentalDay
   const searchParams = useSearchParams();
   const [formattedDates, setFormattedDates] = useState({ start: '', end: '' });
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  
+  const imageList = car.imageUrls && car.imageUrls.length > 0 ? car.imageUrls : [car.imageUrl];
 
   useEffect(() => {
     try {
@@ -280,9 +290,23 @@ Combustible: $${FUEL_COST.toFixed(2)}
                     <CardTitle className="font-headline text-2xl text-primary">Resumen de la Renta</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="relative h-40 w-full rounded-lg overflow-hidden mb-4">
-                        <Image src={car.imageUrl} alt={car.name} data-ai-hint={car.imageHint} fill className="object-cover" />
-                    </div>
+                     <Carousel className="w-full mb-4">
+                      <CarouselContent>
+                        {imageList.map((img, index) => (
+                          <CarouselItem key={index}>
+                            <div className="relative h-48 w-full">
+                               <Image src={img} alt={`${car.name} - Imagen ${index + 1}`} data-ai-hint={car.imageHint} fill className="object-cover rounded-lg" />
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      {imageList.length > 1 && (
+                        <>
+                          <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
+                          <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
+                        </>
+                      )}
+                    </Carousel>
                     
                     <h3 className="font-headline text-xl font-semibold text-primary">Reserva elegida</h3>
                     <Table>
