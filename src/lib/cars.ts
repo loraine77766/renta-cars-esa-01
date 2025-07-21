@@ -150,7 +150,7 @@ export const cars: Car[] = [
     name: 'Hyundai Cantus',
     description: 'Un vehículo versátil y moderno, perfecto para cualquier aventura.',
     pricePerDay: 115,
-    imageUrl: '/images/images/hyundai cabtus.jpg',
+    imageUrl: '/images/images/hyundai_cabtus.jpg',
     imageHint: 'suv modern',
     features: ['4 Puertas', '5 Pasajeros', 'Automático', 'Gasolina', 'Clima', 'Maletero', 'Seguro incluido', 'Chapa ESA'],
     details: {
