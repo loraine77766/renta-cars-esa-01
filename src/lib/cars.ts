@@ -8,7 +8,7 @@ export const cars: Car[] = [
     description: 'Un SUV espacioso y lujoso, perfecto para viajes largos con la familia.',
     pricePerDay: 140,
     originalPricePerDay: 150,
-    imageUrl: '/images/images/bestunest90.jpg',
+    imageUrl: '/images/images/t90.jpg',
     imageHint: 'suv luxury white',
     features: ['4 Puertas', '5 Pasajeros', 'Automático', 'Gasolina', 'Clima', 'Maletero', 'Seguro incluido', 'Chapa ESA'],
     details: {
