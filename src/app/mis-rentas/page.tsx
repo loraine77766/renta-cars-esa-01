@@ -50,7 +50,7 @@ export default function MisRentasPage() {
             </p>
             <div className="mt-6">
               <Button asChild className="bg-accent hover:bg-accent/90">
-                <Link href="/">
+                <Link href="/autos">
                   Ver autos
                 </Link>
               </Button>
@@ -66,6 +66,8 @@ export default function MisRentasPage() {
               const endDate = parseISO(rental.endDate);
               const rentalDays = differenceInCalendarDays(endDate, startDate) + 1;
               const totalPrice = rentalDays * car.pricePerDay;
+
+              const confirmationUrl = `/confirmacion?carId=${car.id}&from=${rental.startDate}&to=${rental.endDate}&pickupLocation=Aeropuerto%20-%20Terminal%203&dropoffLocation=Aeropuerto%20-%20Terminal%203&pickupTime=10:00&dropoffTime=10:00`;
 
               return (
                 <Card key={index} className="flex flex-col overflow-hidden shadow-md">
@@ -103,7 +105,7 @@ export default function MisRentasPage() {
                         Eliminar
                     </Button>
                     <Button asChild className="bg-accent hover:bg-accent/90">
-                       <Link href={`/confirmacion?carId=${car.id}&from=${rental.startDate}&to=${rental.endDate}`}>
+                       <Link href={confirmationUrl}>
                             Rentar
                        </Link>
                     </Button>
