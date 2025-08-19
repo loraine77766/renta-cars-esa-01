@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { cars } from '@/lib/cars';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
-import ReservationForm from './ReservationForm';
+import ReservationForm from '@/app/reserva/ReservationForm';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Suspense } from 'react';

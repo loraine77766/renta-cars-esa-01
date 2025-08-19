@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { cars } from '@/lib/cars';
-import ConfirmationDetails from './ConfirmationDetails';
+import ConfirmationDetails from '@/app/confirmacion/ConfirmationDetails';
 import { calculateReservationDetails } from '@/lib/utils';
 import type { ReservationDetails as ReservationDetailsType } from '@/lib/types';
 
