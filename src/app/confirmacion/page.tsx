@@ -9,7 +9,6 @@ import ConfirmationDetails from './ConfirmationDetails';
 import { calculateReservationDetails } from '@/lib/utils';
 import type { ReservationDetails as ReservationDetailsType } from '@/lib/types';
 
-// This is the correct way to type page props in Next.js App Router
 type ConfirmationPageProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
