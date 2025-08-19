@@ -10,21 +10,13 @@ import type { ReservationDetails as ReservationDetailsType } from '@/lib/types';
 
 
 type ConfirmationPageProps = {
-  searchParams: {
-    carId?: string;
-    from?: string;
-    to?: string;
-    pickupLocation?: string;
-    dropoffLocation?: string;
-    pickupTime?: string;
-    dropoffTime?: string;
-  };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export default function ConfirmationPage({ searchParams }: ConfirmationPageProps) {
   const { carId, from, to, pickupLocation, dropoffLocation, pickupTime, dropoffTime } = searchParams;
 
-  if (!carId || !from || !to || !pickupLocation || !dropoffLocation || !pickupTime || !dropoffTime) {
+  if (!carId || !from || !to || !pickupLocation || !dropoffLocation || !pickupTime || !dropoffTime || Array.isArray(carId) || Array.isArray(from) || Array.isArray(to) || Array.isArray(pickupLocation) || Array.isArray(dropoffLocation) || Array.isArray(pickupTime) || Array.isArray(dropoffTime)) {
     redirect('/');
   }
 
