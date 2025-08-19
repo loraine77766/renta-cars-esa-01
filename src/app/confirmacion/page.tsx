@@ -9,13 +9,11 @@ import ConfirmationDetails from './ConfirmationDetails';
 import { calculateReservationDetails } from '@/lib/utils';
 import type { ReservationDetails as ReservationDetailsType } from '@/lib/types';
 
-type ConfirmationPageProps = {
-  searchParams: {
-    [key: string]: string | string[] | undefined;
-  };
-};
-
-export default function ConfirmationPage({ searchParams }: ConfirmationPageProps) {
+export default function ConfirmationPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const { carId, from, to, pickupLocation, dropoffLocation, pickupTime, dropoffTime } = searchParams;
 
   if (
