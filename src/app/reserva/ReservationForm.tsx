@@ -97,7 +97,7 @@ export default function ReservationForm({ car }: { car: Car }) {
 
   const minRentDaysString = car.details?.notes.find(n => n.includes('Mínimo de renta'));
   const minRentDaysMatch = minRentDaysString ? minRentDaysString.match(/\d+/) : null;
-  const minRentDays = minRentDaysMatch ? parseInt(minRentDaysMatch[0], 10) : 1;
+  const minRentDays = minRentDaysMatch ? parseInt(minRentDaysMatch[0], 10) : 3;
   const requiresMinDays = !!minRentDaysString;
 
   const isDateRangeValid = !!reservationDetails && reservationDetails.rentalDays > 0 && (!requiresMinDays || reservationDetails.rentalDays >= minRentDays);

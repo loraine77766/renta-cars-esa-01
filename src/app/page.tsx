@@ -52,7 +52,7 @@ export default function Home() {
             Renta de Autos en Cuba
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-4">
-            RentCubaCar es una agencia en línea con asistencia telefónica dedicada a la intermediación, organización y realización de proyectos turísticos, planes e itinerarios y venta de productos turísticos como: alquiler de coches y reservas de hoteles.
+            Renta Cars ESA es una agencia en línea con asistencia telefónica dedicada a la intermediación, organización y realización de proyectos turísticos, planes e itinerarios y venta de productos turísticos como: alquiler de coches y reservas de hoteles.
           </p>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Encuentra el auto perfecto para tu viaje. Fácil, rápido y confiable.
@@ -88,7 +88,7 @@ export default function Home() {
 
         <section className="my-16 py-12 bg-secondary/50 rounded-lg">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="font-headline text-3xl font-bold mb-8 text-primary">¿Por qué reservar un Auto con RentCubaCar?</h2>
+            <h2 className="font-headline text-3xl font-bold mb-8 text-primary">¿Por qué reservar un Auto con Renta Cars ESA?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="text-center shadow-md">
                 <CardHeader>

@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'rentacar - Renta de Autos en Cuba',
+  title: 'Renta Cars ESA - Renta de Autos en Cuba',
   description: 'La mejor opción para rentar autos en Cuba. Encuentra el vehículo perfecto para tu viaje.',
 };
 

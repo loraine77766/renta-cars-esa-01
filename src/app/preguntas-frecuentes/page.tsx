@@ -16,7 +16,7 @@ export default function PreguntasFrecuentesPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
                 <p>
-                    RentCubaCar es una empresa llena de experiencias, donde te ayudamos a encontrar y rentar tu Auto en Cuba a los precios más acogedores del mercado.
+                    Renta Cars ESA es una empresa llena de experiencias, donde te ayudamos a encontrar y rentar tu Auto en Cuba a los precios más acogedores del mercado.
                 </p>
                 <p>
                     Ubicada en una de las ciudades más emblemáticas de Europa en Italia, que ofrece un servicio distinto a las demás Agencias de viaje. Nos preocupamos por las necesidades reales de nuestros clientes.
@@ -24,7 +24,7 @@ export default function PreguntasFrecuentesPage() {
 
                 <h3 className="font-headline text-2xl text-primary text-center pt-4">Nuestro objetivo</h3>
                  <p>
-                    RentCubaCar se proyecta como objetivo principal el desarrollo servicios que cumplan con las expectativas de nuestros clientes, especialmente cubanos radicados en Europa y el Estado de la Florida. Todo el equipo humano de RentCubaCar se involucra para mantener el alto grado de satisfacción al cliente. Por eso, día tras día, hacemos que sus trámites con nosotros sean más fáciles, rápidos, eficaces y seguros, logrando con ello que nuestros clientes depositen su confianza en nosotros y nuestros servicios.
+                    Renta Cars ESA se proyecta como objetivo principal el desarrollo servicios que cumplan con las expectativas de nuestros clientes, especialmente cubanos radicados en Europa y el Estado de la Florida. Todo el equipo humano de Renta Cars ESA se involucra para mantener el alto grado de satisfacción al cliente. Por eso, día tras día, hacemos que sus trámites con nosotros sean más fáciles, rápidos, eficaces y seguros, logrando con ello que nuestros clientes depositen su confianza en nosotros y nuestros servicios.
                 </p>
             </CardContent>
         </Card>

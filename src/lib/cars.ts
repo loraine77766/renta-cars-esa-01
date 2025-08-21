@@ -29,8 +29,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $45.00 USD.',
         'Costo de combustible (única vez): $72.00 USD.'
       ]
@@ -63,8 +63,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $30.00 USD.',
         'Costo de combustible (única vez): $65.00 USD.'
       ]
@@ -97,8 +97,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $40.00 USD.',
         'Costo de combustible (única vez): $72.00 USD.'
       ]
@@ -131,8 +131,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $40.00 USD.',
         'Costo de combustible (única vez): $40.00 USD.'
       ]
@@ -173,8 +173,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $30.00 USD.',
         'Costo de combustible (única vez): $65.00 USD.'
       ]
@@ -207,8 +207,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $35.00 USD.',
         'Costo de combustible (única vez): $78.00 USD.'
       ]
@@ -241,8 +241,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $25.00 USD.',
         'Costo de combustible (única vez): $59.00 USD.'
       ]
@@ -274,8 +274,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $30.00 USD.',
         'Costo de combustible (única vez): $70.00 USD.'
       ]
@@ -307,8 +307,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $35.00 USD.',
         'Costo de combustible (única vez): $78.00 USD.'
       ]
@@ -341,8 +341,8 @@ export const cars: Car[] = [
       ],
       notes: [
         'A conductores entre 21-24 años y 75-80 años de edad se le incrementará el costo del seguro en un 50%.',
-        'RentCubaCar solo confirma categorías, no marcas y/o modelos específicos.',
-        'Mínimo de renta: 5 días.',
+        'Renta Cars ESA solo confirma categorías, no marcas y/o modelos específicos.',
+        'Mínimo de renta: 3 días.',
         'Costo de seguro por día: $30.00 USD.',
         'Costo de combustible (única vez): $75.00 USD.'
       ]
