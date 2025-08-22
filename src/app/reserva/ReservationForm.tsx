@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format, differenceInCalendarDays, addDays } from 'date-fns';
+import { format, differenceInDays, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 
@@ -86,7 +86,7 @@ export default function ReservationForm({ car }: { car: Car }) {
   
   useEffect(() => {
     if (pickupDate && dropoffDate && dropoffDate >= pickupDate) {
-      const days = differenceInCalendarDays(dropoffDate, pickupDate) + 1;
+      const days = differenceInDays(dropoffDate, pickupDate);
       setReservationDetails(calculateReservationDetails(days, car.pricePerDay));
       trigger("dropoffDate");
     } else {

@@ -142,8 +142,8 @@ export const cars: Car[] = [
     id: 4,
     name: 'Kia Picanto',
     description: 'Pequeño, ágil y fácil de estacionar. La mejor opción para moverse por calles estrechas.',
-    pricePerDay: 50,
-    originalPricePerDay: 57,
+    pricePerDay: 60,
+    originalPricePerDay: 65,
     imageUrl: '/images/images/kia-picanto2.jpg',
     imageUrls: [
       '/images/images/kia-picanto2.jpg',

@@ -1,6 +1,6 @@
 
 import { redirect } from 'next/navigation';
-import { differenceInCalendarDays, isValid, parseISO } from 'date-fns';
+import { differenceInDays, isValid, parseISO } from 'date-fns';
 import type { Metadata } from 'next';
 
 import Header from '@/components/Header';
@@ -41,7 +41,7 @@ export default function ConfirmationPage({
     redirect('/');
   }
   
-  const rentalDays = differenceInCalendarDays(endDate, startDate) + 1;
+  const rentalDays = differenceInDays(endDate, startDate);
   if (rentalDays <= 0) {
       redirect('/');
   }
