@@ -469,5 +469,3 @@ Total con 20% descuento (pago adelantado): $${reservationDetails.totalWithDiscou
     </div>
   );
 }
-
-    

@@ -1,7 +1,7 @@
 
 
 import { redirect } from 'next/navigation';
-import { differenceInDays, isValid, parseISO } from 'date-fns';
+import { differenceInDays, isValid, parse } from 'date-fns';
 import type { Metadata } from 'next';
 
 import Header from '@/components/Header';
@@ -35,8 +35,8 @@ export default function ConfirmationPage({
     redirect('/');
   }
 
-  const startDate = parseISO(from);
-  const endDate = parseISO(to);
+  const startDate = parse(from, 'yyyy-MM-dd', new Date());
+  const endDate = parse(to, 'yyyy-MM-dd', new Date());
 
   if (!isValid(startDate) || !isValid(endDate) || endDate < startDate) {
     redirect('/');
@@ -72,4 +72,3 @@ export default function ConfirmationPage({
     </div>
   );
 }
-

@@ -23,7 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info, Calendar as CalendarIcon, Fuel, ShieldCheck, FileText } from 'lucide-react';
-import RentalInfo from '../confirmacion/RentalInfo';
+import RentalInfo from '@/app/confirmacion/RentalInfo';
 import {
   Carousel,
   CarouselContent,
