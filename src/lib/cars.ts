@@ -181,10 +181,10 @@ export const cars: Car[] = [
   },
   {
     id: 13,
-    name: 'Kia Sportage',
+    name: 'Kia Picanto (Grande)',
     description: 'Un SUV grande y versátil, ideal para aventuras familiares o grupales con máxima comodidad.',
     pricePerDay: 60,
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: '/images/images/kia-picanto65.jpg',
     imageHint: 'suv modern white',
     features: ['4 Puertas', '5 Pasajeros', 'Automático', 'Gasolina', 'Clima', 'Maletero grande', 'Seguro incluido', 'Chapa ESA'],
     details: {
@@ -217,7 +217,7 @@ export const cars: Car[] = [
     name: 'Kia Rio',
     description: 'Un sedán compacto, económico y confiable, perfecto para recorrer la ciudad con estilo.',
     pricePerDay: 65,
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: '/images/images/kia-rio.jpg',
     imageHint: 'sedan compact red',
     features: ['4 Puertas', '5 Pasajeros', 'Automático', 'Gasolina', 'Clima', 'Maletero', 'Seguro incluido', 'Chapa ESA'],
     details: {
