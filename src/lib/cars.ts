@@ -143,7 +143,7 @@ export const cars: Car[] = [
     name: 'SWM G05',
     description: 'Un SUV espacioso y versátil con capacidad para 7 pasajeros, ideal para familias y grupos grandes.',
     pricePerDay: 120,
-    imageUrl: '/images/images/swm-g05.jpg',
+    imageUrl: '/images/images/swm-g05.jpeg',
     imageHint: 'suv family white',
     features: ['7 Pasajeros', 'Automático', 'Motor 1.5L Turbo', 'Gasolina', 'Clima', 'Techo Panorámico', 'Pantalla Táctil 12"', 'Chapa ESA'],
     details: {
