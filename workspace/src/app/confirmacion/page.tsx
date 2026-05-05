@@ -1,6 +1,6 @@
 
 import { redirect } from 'next/navigation';
-import { differenceInDays, isValid, parseISO } from 'date-fns';
+import { isValid, parseISO } from 'date-fns';
 import type { Metadata } from 'next';
 
 import Header from '@/components/Header';
