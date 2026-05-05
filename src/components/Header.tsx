@@ -45,7 +45,7 @@ export default function Header() {
     { href: "/", label: "Inicio", icon: <CarFront className="h-4 w-4" /> },
     { href: "/autos", label: "Autos", icon: <CarFront className="h-4 w-4" /> },
     { href: "/preguntas-frecuentes", label: "Preguntas Frecuentes", icon: <HelpCircle className="h-4 w-4" /> },
-    { href: "https://wa.me/17067179341", label: "Soporte", icon: <LifeBuoy className="h-4 w-4" />, target: "_blank" },
+    { href: "https://wa.me/15879120936", label: "Soporte", icon: <LifeBuoy className="h-4 w-4" />, target: "_blank" },
   ];
 
   return (

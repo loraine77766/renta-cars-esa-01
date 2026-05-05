@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -185,7 +183,7 @@ Total con 20% descuento (pago adelantado): $${reservationDetails.totalWithDiscou
 -----------------------------------
 ¡Gracias!
     `;
-    const whatsappUrl = `https://wa.me/17067179341?text=${encodeURIComponent(message.trim())}`;
+    const whatsappUrl = `https://wa.me/15879120936?text=${encodeURIComponent(message.trim())}`;
     window.open(whatsappUrl, '_blank');
     setIsConfirmationDialogOpen(true);
   }
@@ -471,5 +469,3 @@ Total con 20% descuento (pago adelantado): $${reservationDetails.totalWithDiscou
     </div>
   );
 }
-
-    

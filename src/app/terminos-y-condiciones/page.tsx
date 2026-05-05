@@ -24,7 +24,7 @@ export default function TerminosYCondicionesPage() {
                     <p><strong>Contacto para Servicio, Soporte, Compras y Devoluciones:</strong></p>
                     <ul>
                         <li>Email: <a href="mailto:info@bluesgroupusa.com">info@bluesgroupusa.com</a></li>
-                        <li>WhatsApp y Teléfono: <a href="https://wa.me/17067179341">+1 (706) 717-9341</a></li>
+                        <li>WhatsApp y Teléfono: <a href="https://wa.me/15879120936">+1 (587) 912-0936</a></li>
                     </ul>
                 </div>
 
