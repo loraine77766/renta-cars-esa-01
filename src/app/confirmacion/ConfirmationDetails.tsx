@@ -100,7 +100,6 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
   
   const paymentOption = form.watch('paymentOption');
   const amountToPay = paymentOption === 'full_payment' ? reservationDetails.totalWithDiscount : reservationDetails.deposit;
-  const paymentConcept = paymentOption === 'full_payment' ? `Pago Completo (20% Desc.)` : `Depósito de Reserva`;
 
   const generateOrderId = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -116,7 +115,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     if (!isValid) return;
 
     if (!firestore) {
-      toast({ variant: "destructive", title: "Error: No hay conexión con la base de datos." });
+      toast({ variant: "destructive", title: "Error: No hay conexión." });
       return;
     }
     
@@ -126,7 +125,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       const values = form.getValues();
       const currentId = orderId || generateOrderId();
 
-      // Registro en Firestore (sin await para que sea instantáneo)
+      // Registro en Firestore (optimista, sin await para rapidez)
       setDoc(doc(firestore, 'pedidos', currentId), {
         id: currentId,
         customerName: `${values.name} ${values.lastName1} ${values.lastName2 || ''}`,
@@ -148,38 +147,38 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       setOrderId(currentId);
       setIsRegistered(true);
 
-      // Abrir WhatsApp inmediatamente
-      const message = `¡Hola! Quiero confirmar mi reserva:\nID PEDIDO: ${currentId}\nVehículo: ${car.name}\nConductor: ${values.name} ${values.lastName1}\nPasaporte: ${values.passport}\nWhatsApp: ${values.phone}\nRecogida: ${formattedDates.start}\nDevolución: ${formattedDates.end}\nPAGO: $${amountToPay.toFixed(2)} (${paymentConcept})\nFavor enviarme link de pago.`.trim();
+      // Mensaje minimalista: Solo el ID de pedido
+      const message = `¡Hola! Mi ID de pedido es: ${currentId}`.trim();
       
       window.open(`https://wa.me/15879120936?text=${encodeURIComponent(message)}`, '_blank');
       
-      toast({ title: "Pedido registrado con éxito" });
+      toast({ title: "Pedido registrado correctamente." });
     } catch (error) {
       console.error("Error:", error);
-      toast({ variant: "destructive", title: "Error al procesar. Inténtalo de nuevo." });
+      toast({ variant: "destructive", title: "Error al procesar." });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
-        <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary mb-2 text-center">Finaliza tu Reserva</h1>
-        <p className="text-center text-muted-foreground mb-8">Completa tus datos para registrar el pedido y contactarnos por WhatsApp.</p>
+    <div className="max-w-6xl mx-auto px-2 md:px-4">
+        <h1 className="font-headline text-2xl md:text-4xl font-bold text-primary mb-2 text-center">Finaliza tu Reserva</h1>
+        <p className="text-center text-sm text-muted-foreground mb-8">Completa tus datos para confirmar tu renta en Cuba.</p>
 
         {isRegistered && (
-          <Card className="mb-8 border-2 border-green-500 bg-green-50 dark:bg-green-900/10">
+          <Card className="mb-8 border-2 border-green-500 bg-green-50 dark:bg-green-900/10 shadow-lg">
             <CardContent className="flex flex-col md:flex-row items-center justify-between p-6 gap-4">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="h-8 w-8 text-green-500 shrink-0" />
                 <div>
-                  <p className="font-bold text-green-700 dark:text-green-300">Pedido registrado con éxito</p>
+                  <p className="font-bold text-green-700 dark:text-green-300">Reserva guardada con éxito</p>
                   <p className="text-xs text-green-600 dark:text-green-400">ID de seguimiento: <span className="font-mono font-bold">{orderId}</span></p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => router.push('/')}>Nueva Reserva</Button>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={handleRegisterAndWhatsApp}>Reabrir WhatsApp</Button>
+              <div className="flex gap-2 w-full md:w-auto">
+                <Button variant="outline" className="flex-1 md:flex-none" size="sm" onClick={() => router.push('/')}>Nueva Reserva</Button>
+                <Button size="sm" className="flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white" onClick={handleRegisterAndWhatsApp}>Reabrir WhatsApp</Button>
               </div>
             </CardContent>
           </Card>
@@ -189,7 +188,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             <div className="lg:col-span-2 space-y-8">
                 <Card className="shadow-lg border-2 border-primary/5">
                     <CardHeader className="bg-primary/5">
-                        <CardTitle className="font-headline text-2xl text-primary">Datos del Conductor</CardTitle>
+                        <CardTitle className="font-headline text-xl text-primary">Datos del Conductor</CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
                         <Form {...form}>
@@ -236,7 +235,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                 </div>
                                 
                                 <Separator />
-                                <h3 className="font-headline text-xl text-primary">Opción de Pago</h3>
+                                <h3 className="font-headline text-lg text-primary">Forma de Pago</h3>
                                 <FormField
                                     control={form.control}
                                     name="paymentOption"
@@ -246,13 +245,13 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <label className={`block p-4 border rounded-lg cursor-pointer transition-all ${field.value === 'deposit' ? 'border-primary ring-2 ring-primary bg-primary/5' : 'border-border'}`}>
                                                     <input type="radio" {...field} value="deposit" checked={field.value === 'deposit'} className="sr-only" />
-                                                    <h4 className="font-semibold">Solo Depósito ($250)</h4>
-                                                    <p className="text-xs text-muted-foreground">Reembolsable al entregar el auto.</p>
+                                                    <h4 className="font-semibold text-sm">Depósito de Reserva ($250)</h4>
+                                                    <p className="text-[10px] text-muted-foreground">Reembolsable al entregar el auto.</p>
                                                 </label>
                                                 <label className={`block p-4 border rounded-lg cursor-pointer transition-all ${field.value === 'full_payment' ? 'border-primary ring-2 ring-primary bg-primary/5' : 'border-border'}`}>
                                                     <input type="radio" {...field} value="full_payment" checked={field.value === 'full_payment'} className="sr-only" />
-                                                    <h4 className="font-semibold">Pago Total (-20% Dto.)</h4>
-                                                    <p className="text-xs text-muted-foreground">Ahorra pagando hoy mismo.</p>
+                                                    <h4 className="font-semibold text-sm">Pago Total (-20% Descuento)</h4>
+                                                    <p className="text-[10px] text-muted-foreground">Ahorra pagando hoy mismo.</p>
                                                 </label>
                                             </div>
                                         </FormControl>
@@ -261,7 +260,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                 />
 
                                 <div className="bg-secondary/30 p-6 rounded-lg text-center border border-dashed border-primary/20">
-                                    <p className="text-sm text-muted-foreground mb-1">Total a pagar ahora:</p>
+                                    <p className="text-xs text-muted-foreground mb-1">Monto a abonar:</p>
                                     <p className="font-bold text-4xl text-primary font-mono">${amountToPay.toFixed(2)}</p>
                                 </div>
 
@@ -269,7 +268,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                   <Button 
                                     type="button"
                                     onClick={handleRegisterAndWhatsApp}
-                                    className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white whitespace-normal text-center"
+                                    className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white whitespace-normal text-center font-bold"
                                     disabled={isSubmitting}
                                   >
                                     {isSubmitting ? (
@@ -277,12 +276,12 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                     ) : (
                                       <>
                                         <MessageCircle className="h-6 w-6 shrink-0" /> 
-                                        <span className="flex-1">Confirmar Reserva y Pagar por WhatsApp</span>
+                                        <span className="flex-1">Confirmar por WhatsApp</span>
                                       </>
                                     )}
                                   </Button>
-                                  <p className="text-[10px] text-center text-muted-foreground mt-4">
-                                    Al hacer clic, se registrará tu pedido y se abrirá WhatsApp con el ID de reserva.
+                                  <p className="text-[10px] text-center text-muted-foreground mt-4 px-2">
+                                    Tus datos se guardarán de forma segura en nuestro sistema y recibirás el ID de reserva por WhatsApp.
                                   </p>
                                 </div>
                             </form>
@@ -293,17 +292,17 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             
             <Card className="shadow-lg lg:sticky lg:top-24 border-2 border-primary/5">
                 <CardHeader className="bg-primary/5">
-                    <CardTitle className="font-headline text-xl text-primary">Resumen de Renta</CardTitle>
+                    <CardTitle className="font-headline text-lg text-primary">Resumen del Viaje</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 space-y-4">
-                    <div className="relative h-40 w-full">
-                       <Image src={car.imageUrl} alt={car.name} fill className="object-cover rounded-lg" />
+                    <div className="relative h-32 w-full">
+                       <Image src={car.imageUrl} alt={car.name} fill className="object-cover rounded-lg shadow-sm" />
                     </div>
                     <Table>
                         <TableBody>
-                            <TableRow><TableCell className="font-semibold p-2">Auto:</TableCell><TableCell className="p-2">{car.name}</TableCell></TableRow>
-                            <TableRow><TableCell className="font-semibold p-2">Días:</TableCell><TableCell className="p-2">{reservationDetails.rentalDays}</TableCell></TableRow>
-                            <TableRow><TableCell className="font-semibold p-2">Recogida:</TableCell><TableCell className="p-2 text-xs">{pickupLocation.split(',')[0]}</TableCell></TableRow>
+                            <TableRow><TableCell className="font-semibold p-2 text-xs">Auto:</TableCell><TableCell className="p-2 text-xs">{car.name}</TableCell></TableRow>
+                            <TableRow><TableCell className="font-semibold p-2 text-xs">Días:</TableCell><TableCell className="p-2 text-xs">{reservationDetails.rentalDays}</TableCell></TableRow>
+                            <TableRow><TableCell className="font-semibold p-2 text-xs">Recogida:</TableCell><TableCell className="p-2 text-xs font-mono">{formattedDates.start}</TableCell></TableRow>
                         </TableBody>
                     </Table>
                     <Separator />
