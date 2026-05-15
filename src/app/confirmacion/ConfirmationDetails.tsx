@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -127,8 +126,8 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       const values = form.getValues();
       const currentId = orderId || generateOrderId();
 
-      // Guardar en Firestore
-      await setDoc(doc(firestore, 'pedidos', currentId), {
+      // Registro en Firestore (sin await para que sea instantáneo)
+      setDoc(doc(firestore, 'pedidos', currentId), {
         id: currentId,
         customerName: `${values.name} ${values.lastName1} ${values.lastName2 || ''}`,
         customerEmail: values.email,
@@ -149,31 +148,15 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       setOrderId(currentId);
       setIsRegistered(true);
 
-      // Abrir WhatsApp
-      const message = `
-¡Hola! Quiero confirmar mi reserva:
------------------------------------
-ID PEDIDO: ${currentId}
------------------------------------
-Vehículo: ${car.name}
-Conductor: ${values.name} ${values.lastName1}
-Pasaporte: ${values.passport}
-WhatsApp: ${values.phone}
------------------------------------
-Recogida: ${formattedDates.start}
-Devolución: ${formattedDates.end}
------------------------------------
-PAGO: $${amountToPay.toFixed(2)} (${paymentConcept})
------------------------------------
-Favor enviarme link de pago.
-      `.trim();
+      // Abrir WhatsApp inmediatamente
+      const message = `¡Hola! Quiero confirmar mi reserva:\nID PEDIDO: ${currentId}\nVehículo: ${car.name}\nConductor: ${values.name} ${values.lastName1}\nPasaporte: ${values.passport}\nWhatsApp: ${values.phone}\nRecogida: ${formattedDates.start}\nDevolución: ${formattedDates.end}\nPAGO: $${amountToPay.toFixed(2)} (${paymentConcept})\nFavor enviarme link de pago.`.trim();
       
       window.open(`https://wa.me/15879120936?text=${encodeURIComponent(message)}`, '_blank');
       
-      toast({ title: "Pedido registrado y WhatsApp abierto" });
+      toast({ title: "Pedido registrado con éxito" });
     } catch (error) {
       console.error("Error:", error);
-      toast({ variant: "destructive", title: "Error al registrar el pedido. Inténtalo de nuevo." });
+      toast({ variant: "destructive", title: "Error al procesar. Inténtalo de nuevo." });
     } finally {
       setIsSubmitting(false);
     }
@@ -196,7 +179,7 @@ Favor enviarme link de pago.
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => router.push('/')}>Nueva Reserva</Button>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={handleRegisterAndWhatsApp}>Abrir WhatsApp otra vez</Button>
+                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={handleRegisterAndWhatsApp}>Reabrir WhatsApp</Button>
               </div>
             </CardContent>
           </Card>
@@ -286,7 +269,7 @@ Favor enviarme link de pago.
                                   <Button 
                                     type="button"
                                     onClick={handleRegisterAndWhatsApp}
-                                    className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white"
+                                    className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white whitespace-normal text-center"
                                     disabled={isSubmitting}
                                   >
                                     {isSubmitting ? (
@@ -294,7 +277,7 @@ Favor enviarme link de pago.
                                     ) : (
                                       <>
                                         <MessageCircle className="h-6 w-6 shrink-0" /> 
-                                        <span>Confirmar Reserva y Pagar por WhatsApp</span>
+                                        <span className="flex-1">Confirmar Reserva y Pagar por WhatsApp</span>
                                       </>
                                     )}
                                   </Button>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -43,7 +42,7 @@ export default function AdminPedidosPage() {
 
   const handleDelete = async (id: string) => {
     if (!firestore) return;
-    if (!confirm('¿Seguro que deseas eliminar este pedido permanentemente?')) return;
+    if (!confirm('¿Seguro que deseas eliminar este pedido?')) return;
     setIsDeleting(id);
     try {
       await deleteDoc(doc(firestore, 'pedidos', id));
@@ -103,15 +102,12 @@ export default function AdminPedidosPage() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                <p className="text-muted-foreground font-semibold text-sm">Consultando base de datos...</p>
+                <p className="text-muted-foreground font-semibold text-sm">Cargando datos...</p>
               </div>
             ) : error ? (
-              <div className="p-10 text-center text-destructive font-bold">Error de conexión con la base de datos.</div>
+              <div className="p-10 text-center text-destructive font-bold">Error de conexión.</div>
             ) : !pedidos || pedidos.length === 0 ? (
-              <div className="p-20 text-center text-muted-foreground">
-                <FileText className="mx-auto h-10 w-10 opacity-20 mb-4" />
-                No hay pedidos registrados.
-              </div>
+              <div className="p-20 text-center text-muted-foreground">No hay pedidos registrados.</div>
             ) : (
               <div className="overflow-x-auto">
                 <Table className="min-w-full">
@@ -137,16 +133,12 @@ export default function AdminPedidosPage() {
                         <TableCell className="px-2 py-4">
                           <div className="flex items-center gap-1 font-bold text-[11px] md:text-sm"><User className="h-3 w-3 shrink-0" /> {pedido.customerName}</div>
                           <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Smartphone className="h-3 w-3 shrink-0" /> {pedido.customerPhone}</div>
-                          <div className="text-[9px] text-accent truncate max-w-[100px] md:max-w-none">{pedido.customerEmail}</div>
                         </TableCell>
                         <TableCell className="px-2 py-4">
                           <Badge variant="secondary" className="text-[9px] mb-1 px-1 h-auto py-0">{pedido.carName}</Badge>
                           <div className="flex items-start gap-1 text-[9px] leading-tight text-muted-foreground">
                             <MapPin className="h-2 w-2 shrink-0 mt-0.5" />
                             {pedido.pickupLocation.split(',')[0]} → {pedido.dropoffLocation.split(',')[0]}
-                          </div>
-                          <div className="text-[9px] font-bold mt-1 whitespace-nowrap">
-                            {pedido.startDate ? format(new Date(pedido.startDate), "dd/MM") : '?'} al {pedido.endDate ? format(new Date(pedido.endDate), "dd/MM") : '?'}
                           </div>
                         </TableCell>
                         <TableCell className="px-2 py-4">
@@ -159,7 +151,6 @@ export default function AdminPedidosPage() {
                         </TableCell>
                         <TableCell className="px-2 py-4">
                           <div className="font-bold text-primary text-[11px] md:text-sm font-mono">${pedido.totalAmount?.toFixed(2)}</div>
-                          <Badge variant="outline" className="text-[8px] h-3 px-1 leading-none">{pedido.paymentOption === 'full_payment' ? 'P. Total' : 'Depósito'}</Badge>
                         </TableCell>
                         <TableCell className="px-2 py-4 text-right">
                           <Button 
@@ -180,11 +171,6 @@ export default function AdminPedidosPage() {
             )}
           </CardContent>
         </Card>
-        
-        <div className="mt-8 bg-card p-4 rounded-lg border text-center">
-            <p className="text-xs text-muted-foreground">Panel optimizado para dispositivos móviles.</p>
-            <p className="text-[10px] text-muted-foreground opacity-50">Versión Administración 2026.1</p>
-        </div>
       </main>
       <Footer />
     </div>
