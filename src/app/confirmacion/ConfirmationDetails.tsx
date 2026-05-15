@@ -7,7 +7,7 @@ import { es } from 'date-fns/locale';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 
@@ -78,7 +78,6 @@ const modifySchema = z.object({
     dropoffDate: z.date(),
 });
 
-
 export default function ConfirmationDetails({ car, startDate, endDate, pickupLocation, dropoffLocation, pickupTime, dropoffTime, reservationDetails }: ConfirmationDetailsProps) {
   const router = useRouter();
   const firestore = useFirestore();
@@ -105,12 +104,9 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
           start: format(startDateTime, "EEE dd/MM/yyyy - HH:mm", { locale: es }),
           end: format(endDateTime, "EEE dd/MM/yyyy - HH:mm", { locale: es }),
         });
-      } else {
-        setFormattedDates({ start: 'Fecha inválida', end: 'Fecha inválida' });
       }
     } catch (e) {
       console.error("Error formatting dates:", e);
-      setFormattedDates({ start: 'Error', end: 'Error' });
     }
   }, [startDate, endDate, pickupTime, dropoffTime]);
   
@@ -194,18 +190,9 @@ Gracias por confiar en Renta Cars ESA.
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!firestore) {
-      toast({
-        variant: "destructive",
-        title: "Error de conexión",
-        description: "No se pudo conectar con la base de datos. Inténtalo más tarde.",
-      });
-      return;
-    }
-
+    if (!firestore) return;
     setIsSubmitting(true);
     try {
-      // Guardar en Firestore
       const docRef = await addDoc(collection(firestore, 'pedidos'), {
         customerName: `${values.name} ${values.lastName1}`,
         customerEmail: values.email,
@@ -229,13 +216,10 @@ ID PEDIDO: ${docRef.id}
 -----------------------------------
 *Detalles del Conductor:*
 Nombre: ${values.name} ${values.lastName1} ${values.lastName2 || ''}
-Fecha de Nacimiento: ${values.birthDay}/${values.birthMonth}/${values.birthYear}
 Teléfono: ${values.phone}
-País: ${values.country}
 Email: ${values.email}
 Pasaporte: ${values.passport}
 Licencia: ${values.driversLicense}
-Vuelo (Opcional): ${values.flightNumber || 'N/A'} - ${values.airline || 'N/A'}
 -----------------------------------
 *Resumen de la Renta:*
 Vehículo: ${car.name}
@@ -255,8 +239,8 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
       console.error("Error saving order:", error);
       toast({
         variant: "destructive",
-        title: "Error al guardar",
-        description: "Ocurrió un error al registrar tu pedido: " + error.message,
+        title: "Error",
+        description: "No se pudo registrar el pedido.",
       });
     } finally {
       setIsSubmitting(false);
@@ -266,7 +250,7 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
   return (
     <div>
         <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4 text-center">Confirma tu Renta</h1>
-        <p className="text-center text-muted-foreground mb-8">Estás a un paso de asegurar tu vehículo. Por favor, revisa los detalles, completa tu información y elige tu opción de pago.</p>
+        <p className="text-center text-muted-foreground mb-8">Estás a un paso de asegurar tu vehículo. Por favor, revisa los detalles y elige tu opción de pago.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
@@ -300,10 +284,10 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
                                                 <FormItem className="flex-1"><FormControl><Input placeholder="Año" type="number" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                                             )}/>
                                         </div>
-                                         <FormMessage>{form.formState.errors.birthYear?.message}</FormMessage>
+                                         <FormMessage />
                                     </FormItem>
                                     <FormField control={form.control} name="phone" render={({ field }) => (
-                                        <FormItem><FormLabel>Teléfono *</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormMessage></FormItem>
+                                        <FormItem><FormLabel>Teléfono *</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
                                     <FormField control={form.control} name="country" render={({ field }) => (
                                         <FormItem><FormLabel>País *</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
@@ -316,16 +300,6 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
                                     )}/>
                                     <FormField control={form.control} name="email" render={({ field }) => (
                                         <FormItem className="md:col-span-2"><FormLabel>Correo electrónico *</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
-                                    )}/>
-                                </div>
-                                <Separator />
-                                <h3 className="font-headline text-xl text-primary">Datos de Vuelo (Opcional)</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                     <FormField control={form.control} name="flightNumber" render={({ field }) => (
-                                        <FormItem><FormLabel>Número de vuelo</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                                    )}/>
-                                     <FormField control={form.control} name="airline" render={({ field }) => (
-                                        <FormItem><FormLabel>Compañía aérea</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                                     )}/>
                                 </div>
                                 
@@ -341,12 +315,12 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
                                                 <label className={`block p-4 border rounded-lg cursor-pointer ${field.value === 'deposit' ? 'border-primary ring-2 ring-primary bg-primary/5' : 'border-border'}`}>
                                                     <input type="radio" {...field} value="deposit" checked={field.value === 'deposit'} className="sr-only" />
                                                     <h4 className="font-semibold">Pagar solo el Depósito</h4>
-                                                    <p className="text-sm text-muted-foreground">Paga $250.00 ahora para reservar. El resto ($<span className="font-mono">{(reservationDetails.rentPrice).toFixed(2)}</span>) se paga al recoger el auto.</p>
+                                                    <p className="text-sm text-muted-foreground">Paga $250.00 ahora para reservar. El resto se paga al recoger el auto.</p>
                                                 </label>
                                                  <label className={`block p-4 border rounded-lg cursor-pointer ${field.value === 'full_payment' ? 'border-primary ring-2 ring-primary bg-primary/5' : 'border-border'}`}>
                                                     <input type="radio" {...field} value="full_payment" checked={field.value === 'full_payment'} className="sr-only" />
                                                     <h4 className="font-semibold">Pagar Todo Ahora y Ahorrar 20%</h4>
-                                                    <p className="text-sm text-muted-foreground">Paga el total de $<span className="font-mono">{reservationDetails.totalWithDiscount.toFixed(2)}</span> y ahorra $<span className="font-mono">{reservationDetails.discountAmount.toFixed(2)}</span>.</p>
+                                                    <p className="text-sm text-muted-foreground">Paga el total de $<span className="font-mono">{reservationDetails.totalWithDiscount.toFixed(2)}</span> con descuento.</p>
                                                 </label>
                                             </div>
                                         </FormControl>
@@ -362,23 +336,12 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
                                     </CardContent>
                                 </Card>
 
-
-                                <p className="text-sm text-muted-foreground text-center mt-4 mb-4">
-                                    Es importante que los datos de contacto (e-mail/teléfono) sean correctos para poder confirmar tu reserva. Sin ésta confirmación por parte de Atención al Cliente (+1 587 912-0936), la reserva no será válida.
-                                </p>
                                 <Button 
                                   type="submit" 
-                                  className="w-full bg-accent hover:bg-accent/90 text-lg py-6 shadow-lg transform transition-transform active:scale-95"
+                                  className="w-full bg-accent hover:bg-accent/90 text-lg py-6 shadow-lg"
                                   disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? (
-                                      <>
-                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                        Registrando pedido...
-                                      </>
-                                    ) : (
-                                      'Confirmar y Pagar por WhatsApp'
-                                    )}
+                                    {isSubmitting ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Registrando...</> : 'Confirmar y Pagar por WhatsApp'}
                                 </Button>
                             </form>
                         </Form>
@@ -388,182 +351,42 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
             
             <Card className="shadow-lg lg:sticky lg:top-24 h-fit border-2 border-primary/5">
                 <CardHeader className="bg-primary/5">
-                    <CardTitle className="font-headline text-2xl text-primary">Resumen de la Renta</CardTitle>
+                    <CardTitle className="font-headline text-2xl text-primary">Resumen</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                     <Carousel className="w-full mb-4">
-                      <CarouselContent>
-                        {imageList.map((img, index) => (
-                          <CarouselItem key={index}>
-                            <div className="relative h-48 w-full">
-                               <Image src={img} alt={`${car.name} - Imagen ${index + 1}`} data-ai-hint={car.imageHint} fill className="object-cover rounded-lg" />
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      {imageList.length > 1 && (
-                        <>
-                          <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
-                          <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
-                        </>
-                      )}
-                    </Carousel>
-                    
-                    <h3 className="font-headline text-xl font-semibold text-primary">Reserva elegida</h3>
+                    <div className="relative h-40 w-full mb-4">
+                       <Image src={car.imageUrl} alt={car.name} data-ai-hint={car.imageHint} fill className="object-cover rounded-lg" />
+                    </div>
                     <Table>
                         <TableBody>
                             <TableRow><TableCell className="font-semibold p-1">Vehículo:</TableCell><TableCell className="p-1">{car.name}</TableCell></TableRow>
-                            <TableRow><TableCell className="font-semibold p-1">Categoría:</TableCell><TableCell className="p-1">{car.features.includes('Automático') ? 'Economico Automático' : 'Economico Manual'}</TableCell></TableRow>
                             <TableRow><TableCell className="font-semibold p-1">Total días:</TableCell><TableCell className="p-1">{reservationDetails.rentalDays}</TableCell></TableRow>
                             <TableRow><TableCell className="font-semibold p-1">Precio diario:</TableCell><TableCell className="p-1">${car.pricePerDay.toFixed(2)}</TableCell></TableRow>
-                             <TableRow>
-                                <TableCell className="font-semibold p-1 align-top">Recogida:</TableCell>
-                                <TableCell className="p-1">{formattedDates.start || '...'} <br/> <span className="text-sm text-muted-foreground">{pickupLocation}</span></TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-semibold p-1 align-top">Devolución:</TableCell>
-                                <TableCell className="p-1">{formattedDates.end || '...'} <br/> <span className="text-sm text-muted-foreground">{dropoffLocation}</span></TableCell>
-                            </TableRow>
                         </TableBody>
                     </Table>
-                    
-                    <Separator className="my-4" />
-                    
-                    <h3 className="font-headline text-xl font-semibold text-primary">Costo Total de la Renta</h3>
-                     <Table>
-                        <TableBody>
-                            <TableRow><TableCell className="text-muted-foreground p-1">Costo de Renta ({reservationDetails.rentalDays} días)</TableCell><TableCell className="text-right p-1 font-mono">${reservationDetails.rentPrice.toFixed(2)}</TableCell></TableRow>
-                            <TableRow><TableCell className="text-muted-foreground p-1">Depósito (reembolsable)</TableCell><TableCell className="text-right p-1 font-mono">$250.00</TableCell></TableRow>
-                        </TableBody>
-                    </Table>
-
                     <Separator className="my-4" />
                     <div className="flex justify-between items-center text-2xl font-bold text-primary">
                         <span className="font-headline">Total:</span>
                         <span className="font-mono">${reservationDetails.totalWithoutDiscount.toFixed(2)}</span>
                     </div>
-                     <Card className="mt-4 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                        <CardContent className="p-3 text-center">
-                            <p className="text-sm font-bold text-green-700 dark:text-green-300">¡Ahorra ${reservationDetails.discountAmount.toFixed(2)}!</p>
-                            <p className="text-xs text-green-600 dark:text-green-400">Paga todo por adelantado por solo <span className="font-mono">${reservationDetails.totalWithDiscount.toFixed(2)}</span>.</p>
-                        </CardContent>
-                    </Card>
-
-                    <Dialog>
-                        <DialogTrigger asChild>
-                             <Button variant="outline" className="w-full mt-4">Modificar Reserva</Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader>
-                                <DialogTitle>Modificar reserva</DialogTitle>
-                            </DialogHeader>
-                            <p className="text-sm text-muted-foreground">Importante: 21 años es la edad mínima permitida para rentar un auto en Cuba.</p>
-                            <Form {...useForm<z.infer<typeof modifySchema>>({ resolver: zodResolver(modifySchema), defaultValues: { pickupDate: startDate, dropoffDate: endDate } })}>
-                                <form onSubmit={(e) => { e.preventDefault(); /* Logic to apply changes */ }} className="space-y-4">
-                                     <FormField
-                                        name="pickupDate"
-                                        render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Fecha de recogida</FormLabel>
-                                            <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                <Button variant={"outline"} className="w-full pl-3 text-left font-normal">
-                                                    {field.value ? (format(field.value, "PPP", { locale: es })) : (<span>Elige una fecha</span>)}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) => date < new Date()}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        name="dropoffDate"
-                                        render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Fecha de devolución</FormLabel>
-                                            <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                <Button variant={"outline"} className="w-full pl-3 text-left font-normal">
-                                                    {field.value ? (format(field.value, "PPP", { locale: es })) : (<span>Elige una fecha</span>)}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) => !startDate || date < startDate}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                        )}
-                                    />
-                                    <DialogFooter className="sm:justify-end">
-                                        <DialogClose asChild>
-                                            <Button type="button" variant="ghost">Cancelar</Button>
-                                        </DialogClose>
-                                        <Button type="submit">Guardar Cambios</Button>
-                                    </DialogFooter>
-                                </form>
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
-
                 </CardContent>
             </Card>
-
         </div>
 
         <AlertDialog open={isConfirmationDialogOpen} onOpenChange={setIsConfirmationDialogOpen}>
             <AlertDialogContent className="sm:max-w-xl">
                 <AlertDialogHeader>
-                    <div className="flex justify-center items-center pb-4">
-                        <PartyPopper className="h-12 w-12 text-accent" />
-                    </div>
-                    <AlertDialogTitle className="text-center font-headline text-2xl text-primary">¡Casi listo! Reserva pre-confirmada.</AlertDialogTitle>
+                    <div className="flex justify-center items-center pb-4"><PartyPopper className="h-12 w-12 text-accent" /></div>
+                    <AlertDialogTitle className="text-center font-headline text-2xl text-primary">¡Casi listo!</AlertDialogTitle>
                     <AlertDialogDescription className="text-center text-muted-foreground space-y-4">
-                        <p>Hemos enviado tu solicitud por WhatsApp y registrado tu pedido con el ID: <strong className="text-primary font-mono">{orderId}</strong>.</p>
-                        <p>Un agente de <strong>Atención al Cliente</strong> se pondrá en contacto contigo en breve para guiarte con el pago.</p>
-                        
-                        <div className="bg-secondary/30 p-4 rounded-lg border border-dashed border-primary/20 mt-4">
-                          <p className="font-semibold text-primary flex items-center justify-center gap-2 mb-2">
-                            <FileText className="h-4 w-4" /> Comprobante de Venta
-                          </p>
-                          <p className="text-xs">Puedes descargar tu factura proforma ahora mismo para tus registros personales.</p>
-                          <Button 
-                            onClick={() => {
-                              const markdown = generateInvoiceMarkdown(form.getValues(), orderId || 'ERROR');
-                              downloadInvoice(markdown, orderId || 'ERROR');
-                            }}
-                            variant="secondary" 
-                            className="mt-3 w-full gap-2"
-                          >
-                            <Download className="h-4 w-4" /> Descargar Factura (.md)
-                          </Button>
+                        <p>Hemos registrado tu pedido con el ID: <strong className="text-primary font-mono">{orderId}</strong>.</p>
+                        <div className="bg-secondary/30 p-4 rounded-lg border border-dashed border-primary/20">
+                          <p className="font-semibold text-primary flex items-center justify-center gap-2 mb-2"><FileText className="h-4 w-4" /> Comprobante</p>
+                          <Button onClick={() => downloadInvoice(generateInvoiceMarkdown(form.getValues(), orderId || 'ERROR'), orderId || 'ERROR')} variant="secondary" className="w-full gap-2"><Download className="h-4 w-4" /> Descargar Factura</Button>
                         </div>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogAction onClick={() => router.push('/')} className="bg-accent hover:bg-accent/90 w-full">
-                    Volver al Inicio
-                </AlertDialogAction>
+                <AlertDialogAction onClick={() => router.push('/')} className="bg-accent hover:bg-accent/90 w-full">Volver al Inicio</AlertDialogAction>
             </AlertDialogContent>
         </AlertDialog>
     </div>

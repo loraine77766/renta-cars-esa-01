@@ -28,7 +28,6 @@ export default function AdminPedidosPage() {
     try {
       return query(collection(firestore, 'pedidos'), orderBy('createdAt', 'desc'));
     } catch (e) {
-      console.error("Error creating query:", e);
       return null;
     }
   }, [firestore, isAuthenticated]);
@@ -42,28 +41,19 @@ export default function AdminPedidosPage() {
       setIsAuthenticated(true);
       setLoginError('');
     } else {
-      setLoginError('Contraseña incorrecta. Inténtalo de nuevo.');
+      setLoginError('Contraseña incorrecta.');
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!firestore) return;
-    if (!confirm('¿Estás seguro de que quieres eliminar este pedido?')) return;
-
+    if (!confirm('¿Eliminar este pedido?')) return;
     setIsDeleting(id);
     try {
       await deleteDoc(doc(firestore, 'pedidos', id));
-      toast({
-        title: "Pedido eliminado",
-        description: "El registro ha sido borrado correctamente.",
-      });
+      toast({ title: "Eliminado" });
     } catch (e) {
-      console.error(e);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No se pudo eliminar el pedido.",
-      });
+      toast({ variant: "destructive", title: "Error" });
     } finally {
       setIsDeleting(null);
     }
@@ -71,35 +61,21 @@ export default function AdminPedidosPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900/10">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="w-full max-w-md shadow-2xl">
+          <Card className="w-full max-w-md">
             <CardHeader className="text-center">
-              <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                <Lock className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-2xl font-headline">Acceso Restringido</CardTitle>
-              <CardDescription>Introduce la contraseña para ver el registro interno.</CardDescription>
+              <Lock className="mx-auto h-8 w-8 text-primary mb-2" />
+              <CardTitle>Acceso Restringido</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
-                <Input 
-                  type="password" 
-                  placeholder="Contraseña" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="text-center text-lg"
-                />
+                <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} />
                 {loginError && <p className="text-destructive text-sm text-center">{loginError}</p>}
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-lg py-6">
-                  Entrar al Panel
-                </Button>
+                <Button type="submit" className="w-full">Entrar</Button>
               </form>
             </CardContent>
-            <CardFooter className="text-center justify-center">
-              <p className="text-xs text-muted-foreground">Renta Cars ESA - Registro Interno 2026</p>
-            </CardFooter>
           </Card>
         </main>
         <Footer />
@@ -108,101 +84,51 @@ export default function AdminPedidosPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900/10">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <ClipboardList className="h-8 w-8 text-primary" />
-            <h1 className="font-headline text-3xl font-bold text-primary">Registro de Pedidos</h1>
-          </div>
+          <h1 className="font-headline text-3xl font-bold text-primary">Registro de Pedidos</h1>
           <Button variant="outline" onClick={() => setIsAuthenticated(false)}>Salir</Button>
         </div>
-
-        <Card className="shadow-xl border-none">
-          <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-            <CardTitle>Historial de Reservas</CardTitle>
-            <CardDescription className="text-primary-foreground/80">
-              Gestiona todos los pedidos recibidos a través de la plataforma.
-            </CardDescription>
-          </CardHeader>
+        <Card>
           <CardContent className="p-0">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                <p className="text-muted-foreground animate-pulse">Consultando base de datos...</p>
+                <p>Cargando...</p>
               </div>
             ) : error ? (
-              <div className="p-20 text-center flex flex-col items-center gap-4">
-                <AlertTriangle className="h-12 w-12 text-destructive" />
-                <div className="text-destructive font-semibold">Error al conectar con la base de datos</div>
-                <p className="text-sm text-muted-foreground max-w-xs">{error.message}</p>
-                <Button variant="outline" onClick={() => window.location.reload()}>Reintentar</Button>
-              </div>
-            ) : pedidos && pedidos.length === 0 ? (
-              <div className="p-20 text-center flex flex-col items-center gap-4">
-                <div className="bg-secondary/50 p-6 rounded-full">
-                   <ClipboardList className="h-12 w-12 text-muted-foreground/50" />
-                </div>
-                <h3 className="text-xl font-bold text-primary">No hay pedidos</h3>
-                <p className="text-muted-foreground max-w-xs mx-auto">
-                  Aún no se ha registrado ninguna reserva en la plataforma.
-                </p>
-              </div>
+              <div className="p-20 text-center text-destructive">Error al cargar datos.</div>
+            ) : !pedidos || pedidos.length === 0 ? (
+              <div className="p-20 text-center">No hay pedidos registrados.</div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-secondary/50">
-                      <TableHead className="w-[200px]">Cliente</TableHead>
+                    <TableRow>
+                      <TableHead>Cliente</TableHead>
                       <TableHead>Vehículo</TableHead>
                       <TableHead>Fechas</TableHead>
                       <TableHead>Total</TableHead>
-                      <TableHead>Estado Pago</TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pedidos?.map((pedido: any) => (
-                      <TableRow key={pedido.id} className="hover:bg-secondary/20 transition-colors">
+                    {pedidos.map((pedido: any) => (
+                      <TableRow key={pedido.id}>
                         <TableCell>
-                          <div className="font-bold text-primary">{pedido.customerName}</div>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                            <Phone className="h-3 w-3" /> {pedido.customerPhone}
-                          </div>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Mail className="h-3 w-3" /> {pedido.customerEmail}
-                          </div>
+                          <div className="font-bold">{pedido.customerName}</div>
+                          <div className="text-xs text-muted-foreground">{pedido.customerPhone}</div>
                         </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-semibold">{pedido.carName}</Badge>
-                          <div className="text-[10px] text-muted-foreground mt-1 uppercase font-mono">ID: {pedido.id}</div>
+                        <TableCell><Badge variant="outline">{pedido.carName}</Badge></TableCell>
+                        <TableCell className="text-xs">
+                          Desde: {pedido.startDate ? format(new Date(pedido.startDate), "dd/MM/yy") : 'N/A'}<br/>
+                          Hasta: {pedido.endDate ? format(new Date(pedido.endDate), "dd/MM/yy") : 'N/A'}
                         </TableCell>
-                        <TableCell>
-                          <div className="text-xs space-y-1">
-                            <div className="flex items-center gap-1">
-                              <span className="text-green-600 font-bold">Desde:</span> {pedido.startDate ? format(new Date(pedido.startDate), "dd MMM yyyy", { locale: es }) : 'N/A'}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="text-red-600 font-bold">Hasta:</span> {pedido.endDate ? format(new Date(pedido.endDate), "dd MMM yyyy", { locale: es }) : 'N/A'}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-mono font-bold text-lg text-primary">${pedido.totalAmount?.toFixed(2)}</div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={pedido.paymentOption === 'full_payment' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'} variant="secondary">
-                            {pedido.paymentOption === 'full_payment' ? 'Pago Completo' : 'Solo Depósito'}
-                          </Badge>
-                        </TableCell>
+                        <TableCell className="font-mono">${pedido.totalAmount?.toFixed(2)}</TableCell>
                         <TableCell className="text-right">
-                          <Button 
-                            variant="destructive" 
-                            size="icon" 
-                            onClick={() => handleDelete(pedido.id)}
-                            disabled={isDeleting === pedido.id}
-                          >
+                          <Button variant="destructive" size="icon" onClick={() => handleDelete(pedido.id)} disabled={isDeleting === pedido.id}>
                             {isDeleting === pedido.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                           </Button>
                         </TableCell>
