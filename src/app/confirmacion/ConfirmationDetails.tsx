@@ -349,7 +349,7 @@ Ya descargué mi factura proforma.
                         
                         <div className="space-y-3">
                             <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                                <p className="text-xs font-bold text-primary uppercase mb-2">Paso 1: Tu Comprobante</p>
+                                <p className="text-xs font-bold text-primary uppercase mb-2 text-left">Paso 1: Tu Comprobante</p>
                                 <Button 
                                     onClick={() => downloadInvoice(generateInvoiceMarkdown(form.getValues(), orderId || 'ERROR'), orderId || 'ERROR')} 
                                     variant="outline" 
@@ -360,7 +360,7 @@ Ya descargué mi factura proforma.
                             </div>
 
                             <div className="bg-accent/5 p-4 rounded-lg border border-accent/20">
-                                <p className="text-xs font-bold text-accent uppercase mb-2">Paso 2: Coordinar Pago</p>
+                                <p className="text-xs font-bold text-accent uppercase mb-2 text-left">Paso 2: Coordinar Pago</p>
                                 <Button 
                                     onClick={handleWhatsAppPayment}
                                     className="w-full gap-2 bg-green-600 hover:bg-green-700"
