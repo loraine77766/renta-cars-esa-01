@@ -161,7 +161,7 @@ Pasaporte: ${values.passport}
 | Cantidad | Descripción del Servicio | Precio Unitario | Subtotal |
 | :--- | :--- | :--- | :--- |
 | ${reservationDetails.rentalDays} | Renta de vehículo: ${car.name} | $${car.pricePerDay.toFixed(2)} /día | $${reservationDetails.rentPrice.toFixed(2)} |
-| 1 | Depósito de Garantía (Reembolsable) | $${reservationDetails.deposit.toFixed(2)} | $${reservationDetails.deposit.toFixed(2)} |
+| 1 | Depósito de Garantía (Reembolsable) | $250.00 | $250.00 |
 
 ## 3. TOTALES
 **Subtotal:** $${reservationDetails.totalWithoutDiscount.toFixed(2)}
@@ -215,7 +215,8 @@ Gracias por confiar en Renta Cars ESA.
       const message = `
 ¡Hola! Quiero confirmar mi reserva de auto:
 -----------------------------------
-ID Pedido: ${docRef.id}
+ID PEDIDO: ${docRef.id}
+-----------------------------------
 *Detalles del Conductor:*
 Nombre: ${values.name} ${values.lastName1} ${values.lastName2 || ''}
 Fecha de Nacimiento: ${values.birthDay}/${values.birthMonth}/${values.birthYear}
@@ -346,7 +347,7 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
 
 
                                 <p className="text-sm text-muted-foreground text-center mt-4 mb-4">
-                                    Es importante que los datos de contácto (e-mail/teléfono) sean correctos para poder confirmar tu reserva. Sin ésta confirmación por parte nuestra, la reserva no será válida.
+                                    Es importante que los datos de contacto (e-mail/teléfono) sean correctos para poder confirmar tu reserva. Sin ésta confirmación por parte de Atención al Cliente (+1 587 912-0936), la reserva no será válida.
                                 </p>
                                 <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-lg py-6 shadow-lg transform transition-transform active:scale-95">
                                     Confirmar y Pagar por WhatsApp
@@ -404,7 +405,7 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
                      <Table>
                         <TableBody>
                             <TableRow><TableCell className="text-muted-foreground p-1">Costo de Renta ({reservationDetails.rentalDays} días)</TableCell><TableCell className="text-right p-1 font-mono">${reservationDetails.rentPrice.toFixed(2)}</TableCell></TableRow>
-                            <TableRow><TableCell className="text-muted-foreground p-1">Depósito (reembolsable)</TableCell><TableCell className="text-right p-1 font-mono">${reservationDetails.deposit.toFixed(2)}</TableCell></TableRow>
+                            <TableRow><TableCell className="text-muted-foreground p-1">Depósito (reembolsable)</TableCell><TableCell className="text-right p-1 font-mono">$250.00</TableCell></TableRow>
                         </TableBody>
                     </Table>
 
@@ -478,7 +479,7 @@ ${paymentConcept}: $${amountToPay.toFixed(2)}
                                                     mode="single"
                                                     selected={field.value}
                                                     onSelect={field.onChange}
-                                                    disabled={(date) => date < startDate}
+                                                    disabled={(date) => !startDate || date < startDate}
                                                     initialFocus
                                                 />
                                             </PopoverContent>
