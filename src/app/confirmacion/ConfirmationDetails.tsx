@@ -67,7 +67,8 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
   const { toast } = useToast();
   const [formattedDates, setFormattedDates] = useState({ start: '', end: '' });
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingInvoice, setIsSubmittingInvoice] = useState(false);
+  const [isSubmittingWhatsApp, setIsSubmittingWhatsApp] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   
   useEffect(() => {
@@ -152,7 +153,9 @@ Depósito Garantía: $250.00
     if (!isValid) return;
 
     if (!firestore) return;
-    setIsSubmitting(true);
+    
+    if (type === 'invoice') setIsSubmittingInvoice(true);
+    else setIsSubmittingWhatsApp(true);
 
     try {
       let currentId = orderId;
@@ -160,7 +163,7 @@ Depósito Garantía: $250.00
 
       if (!isRegistered) {
         currentId = generateOrderId();
-        // Verificar si el ID ya existe (muy improbable, pero por seguridad)
+        // Verificar si el ID ya existe
         const docSnap = await getDoc(doc(firestore, 'pedidos', currentId));
         if (docSnap.exists()) {
           currentId = generateOrderId();
@@ -222,7 +225,8 @@ Ya tengo mi factura proforma.
       console.error("Error:", error);
       toast({ variant: "destructive", title: "Error al procesar la solicitud" });
     } finally {
-      setIsSubmitting(false);
+      setIsSubmittingInvoice(false);
+      setIsSubmittingWhatsApp(false);
     }
   };
 
@@ -332,10 +336,10 @@ Ya tengo mi factura proforma.
                                     <Button 
                                       type="button"
                                       onClick={() => handleAction('invoice')} 
-                                      className="w-full h-16 text-lg gap-3 bg-primary hover:bg-primary/90 shadow-lg"
-                                      disabled={isSubmitting}
+                                      className="w-full h-auto py-5 text-lg gap-3 bg-primary hover:bg-primary/90 shadow-lg whitespace-normal"
+                                      disabled={isSubmittingInvoice || isSubmittingWhatsApp}
                                     >
-                                      {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><FileText className="h-6 w-6" /> Descargar Factura Proforma</>}
+                                      {isSubmittingInvoice ? <Loader2 className="h-6 w-6 animate-spin" /> : <><FileText className="h-6 w-6 shrink-0" /> <span className="text-center">Descargar Factura Proforma</span></>}
                                     </Button>
                                     <p className="text-[10px] text-center text-muted-foreground">Descarga este documento para presentarlo en la oficina de renta.</p>
                                   </div>
@@ -345,10 +349,10 @@ Ya tengo mi factura proforma.
                                     <Button 
                                       type="button"
                                       onClick={() => handleAction('whatsapp')}
-                                      className="w-full h-16 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white"
-                                      disabled={isSubmitting}
+                                      className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white whitespace-normal"
+                                      disabled={isSubmittingInvoice || isSubmittingWhatsApp}
                                     >
-                                      {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><MessageCircle className="h-6 w-6" /> Pagar por WhatsApp</>}
+                                      {isSubmittingWhatsApp ? <Loader2 className="h-6 w-6 animate-spin" /> : <><MessageCircle className="h-6 w-6 shrink-0" /> <span className="text-center">Pagar por WhatsApp</span></>}
                                     </Button>
                                     <p className="text-[10px] text-center text-muted-foreground">Envía el ID de tu pedido para recibir el link de pago seguro.</p>
                                   </div>
