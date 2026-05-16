@@ -156,10 +156,9 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     const currentId = orderId || generateOrderId();
     if (!orderId) setOrderId(currentId);
 
-    // Registrar en Firestore sin esperar el await para no bloquear la UI
+    // Registrar en Firestore sin bloquear
     registerInFirestore(currentId);
 
-    // Pequeño delay para asegurar que el ID se renderice en la factura oculta
     setTimeout(async () => {
       if (invoiceRef.current) {
         try {
@@ -168,12 +167,9 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
           const pdf = new jsPDF('p', 'mm', 'a4');
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-          
           pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-          
           const fileName = `Factura_${form.getValues('name')}_${form.getValues('lastName1')}_${currentId}.pdf`.replace(/\s+/g, '_');
           pdf.save(fileName);
-          
           toast({ title: "Factura descargada correctamente." });
         } catch (error) {
           console.error("PDF Error:", error);
@@ -195,12 +191,16 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     const currentId = orderId || generateOrderId();
     if (!orderId) setOrderId(currentId);
 
-    await registerInFirestore(currentId);
-
-    const message = `¡Hola! Mi ID de pedido es: ${currentId}`;
-    window.open(`https://wa.me/15879120936?text=${encodeURIComponent(message)}`, '_blank');
-    
-    setIsSubmittingWhatsApp(false);
+    // Registrar y abrir WhatsApp
+    try {
+      await registerInFirestore(currentId);
+      const message = `¡Hola! Mi ID de pedido es: ${currentId}. Quiero confirmar mi reserva de auto.`;
+      window.location.href = `https://wa.me/15879120936?text=${encodeURIComponent(message)}`;
+    } catch (e) {
+      console.error("WhatsApp error:", e);
+    } finally {
+      setIsSubmittingWhatsApp(false);
+    }
   };
 
   return (
@@ -335,7 +335,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             </Card>
         </div>
 
-        {/* Factura Proforma Detallada (Hidden for PDF generation) */}
+        {/* Factura Proforma (Hidden) */}
         <div className="absolute left-[-9999px] top-[-9999px]">
           <div ref={invoiceRef} className="p-10 bg-white text-black w-[210mm] font-sans">
             <div className="flex justify-between items-center border-b-4 border-primary pb-6 mb-8">
@@ -364,14 +364,13 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                   <p><span className="font-bold">Email:</span> {form.getValues('email')}</p>
                   <p><span className="font-bold">Pasaporte:</span> {form.getValues('passport')}</p>
                   <p><span className="font-bold">Licencia:</span> {form.getValues('driversLicense')}</p>
-                  <p><span className="font-bold">Vuelo:</span> {form.getValues('flight') || 'N/A'}</p>
                 </div>
               </div>
               <div className="border border-primary/20 p-4 rounded-lg">
                 <h3 className="font-bold text-primary border-b-2 border-primary/10 mb-3 pb-1 uppercase text-sm">Detalles de Renta</h3>
                 <div className="space-y-1 text-sm">
                   <p><span className="font-bold">Vehículo:</span> {car.name}</p>
-                  <p><span className="font-bold">Días de Renta:</span> {reservationDetails.rentalDays}</p>
+                  <p><span className="font-bold">Días:</span> {reservationDetails.rentalDays}</p>
                   <p><span className="font-bold">Recogida:</span> {formattedDates.start}</p>
                   <p className="text-xs ml-4 text-muted-foreground">{pickupLocation}</p>
                   <p><span className="font-bold">Devolución:</span> {formattedDates.end}</p>
@@ -385,44 +384,26 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
-                    <span>Precio Renta ({reservationDetails.rentalDays} días x ${car.pricePerDay}/día):</span>
+                    <span>Precio Renta:</span>
                     <span className="font-mono font-bold">${reservationDetails.rentPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span>Depósito de Garantía (Reembolsable):</span>
+                    <span>Depósito (Reembolsable):</span>
                     <span className="font-mono font-bold">$250.00</span>
                   </div>
-                  
                   <Separator className="my-2" />
-                  
-                  <div className="flex justify-between items-center text-md">
-                    <span>Subtotal sin descuentos:</span>
-                    <span className="font-mono font-bold">${(reservationDetails.rentPrice + 250).toFixed(2)}</span>
-                  </div>
-
                   {form.getValues('paymentOption') === 'full_payment' && (
                     <div className="flex justify-between items-center text-green-600 font-bold bg-green-50 p-2 rounded">
-                      <span>Descuento Pago Adelantado (20% sobre renta):</span>
+                      <span>Descuento (20%):</span>
                       <span className="font-mono">-${reservationDetails.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
-
                   <div className="flex justify-between items-center text-2xl font-bold text-primary mt-4 border-t-2 border-primary pt-4">
-                    <span>MONTO TOTAL A PAGAR:</span>
+                    <span>MONTO TOTAL:</span>
                     <span className="font-mono">${amountToPay.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-12 text-[11px] text-gray-500 border-t pt-6">
-              <p className="font-bold mb-2">TÉRMINOS IMPORTANTES:</p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Esta es una <span className="font-bold">FACTURA PROFORMA</span> informativa para la gestión de su reserva.</li>
-                <li>Para confirmar su reserva, debe contactar con soporte vía WhatsApp proporcionando su <span className="font-bold">ID de Reserva</span>.</li>
-                <li>El <span className="font-bold">Depósito de Garantía</span> será reembolsado íntegramente al finalizar el período de renta si el vehículo no presenta daños.</li>
-                <li>En caso de accidente o daños, los costos de reparación se deducirán del depósito de garantía.</li>
-              </ul>
             </div>
           </div>
         </div>
