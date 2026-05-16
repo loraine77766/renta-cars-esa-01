@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { format, differenceInYears } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -10,6 +11,8 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase/index';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 import type { Car, ReservationDetails } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { Loader2, MessageCircle, CheckCircle2 } from 'lucide-react';
+import { Loader2, MessageCircle, CheckCircle2, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ConfirmationDetailsProps {
@@ -64,10 +67,12 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
   const router = useRouter();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const invoiceRef = useRef<HTMLDivElement>(null);
+  
   const [formattedDates, setFormattedDates] = useState({ start: '', end: '' });
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   
   useEffect(() => {
     try {
@@ -110,23 +115,11 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     return result;
   };
 
-  const handleRegisterAndWhatsApp = async () => {
-    const isValid = await form.trigger();
-    if (!isValid) return;
-
-    if (!firestore) {
-      toast({ variant: "destructive", title: "Error: No hay conexión." });
-      return;
-    }
-    
-    setIsSubmitting(true);
-
+  const registerInFirestore = async (currentId: string) => {
+    if (!firestore) return;
+    const values = form.getValues();
     try {
-      const values = form.getValues();
-      const currentId = orderId || generateOrderId();
-
-      // Registro en Firestore (optimista, sin await para rapidez)
-      setDoc(doc(firestore, 'pedidos', currentId), {
+      await setDoc(doc(firestore, 'pedidos', currentId), {
         id: currentId,
         customerName: `${values.name} ${values.lastName1} ${values.lastName2 || ''}`,
         customerEmail: values.email,
@@ -143,46 +136,68 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
         paymentOption: values.paymentOption,
         createdAt: serverTimestamp(),
       });
-
-      setOrderId(currentId);
-      setIsRegistered(true);
-
-      // Mensaje minimalista: Solo el ID de pedido
-      const message = `¡Hola! Mi ID de pedido es: ${currentId}`.trim();
-      
-      window.open(`https://wa.me/15879120936?text=${encodeURIComponent(message)}`, '_blank');
-      
-      toast({ title: "Pedido registrado correctamente." });
-    } catch (error) {
-      console.error("Error:", error);
-      toast({ variant: "destructive", title: "Error al procesar." });
-    } finally {
-      setIsSubmitting(false);
+      return true;
+    } catch (e) {
+      console.error("Firestore error:", e);
+      return false;
     }
+  };
+
+  const handleDownloadInvoice = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) return;
+
+    setIsDownloading(true);
+    const currentId = orderId || generateOrderId();
+    setOrderId(currentId);
+
+    // Registro silencioso
+    registerInFirestore(currentId);
+
+    // Generación de PDF
+    setTimeout(async () => {
+      if (invoiceRef.current) {
+        try {
+          const canvas = await html2canvas(invoiceRef.current, { scale: 2 });
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save(`Factura_RentaCarsESA_${currentId}.pdf`);
+          toast({ title: "Factura descargada correctamente." });
+        } catch (error) {
+          console.error("PDF Error:", error);
+          toast({ variant: "destructive", title: "Error al generar factura." });
+        }
+      }
+      setIsDownloading(false);
+    }, 100);
+  };
+
+  const handleRegisterAndWhatsApp = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) return;
+
+    setIsSubmitting(true);
+    const currentId = orderId || generateOrderId();
+    setOrderId(currentId);
+
+    // Registro silencioso
+    registerInFirestore(currentId);
+
+    const message = `¡Hola! Mi ID de pedido es: ${currentId}`;
+    window.open(`https://wa.me/15879120936?text=${encodeURIComponent(message)}`, '_blank');
+    
+    setIsSubmitting(false);
+    toast({ title: "Redirigiendo a WhatsApp..." });
   };
 
   return (
     <div className="max-w-6xl mx-auto px-2 md:px-4">
         <h1 className="font-headline text-2xl md:text-4xl font-bold text-primary mb-2 text-center">Finaliza tu Reserva</h1>
         <p className="text-center text-sm text-muted-foreground mb-8">Completa tus datos para confirmar tu renta en Cuba.</p>
-
-        {isRegistered && (
-          <Card className="mb-8 border-2 border-green-500 bg-green-50 dark:bg-green-900/10 shadow-lg">
-            <CardContent className="flex flex-col md:flex-row items-center justify-between p-6 gap-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-8 w-8 text-green-500 shrink-0" />
-                <div>
-                  <p className="font-bold text-green-700 dark:text-green-300">Reserva guardada con éxito</p>
-                  <p className="text-xs text-green-600 dark:text-green-400">ID de seguimiento: <span className="font-mono font-bold">{orderId}</span></p>
-                </div>
-              </div>
-              <div className="flex gap-2 w-full md:w-auto">
-                <Button variant="outline" className="flex-1 md:flex-none" size="sm" onClick={() => router.push('/')}>Nueva Reserva</Button>
-                <Button size="sm" className="flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white" onClick={handleRegisterAndWhatsApp}>Reabrir WhatsApp</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
@@ -264,25 +279,24 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                     <p className="font-bold text-4xl text-primary font-mono">${amountToPay.toFixed(2)}</p>
                                 </div>
 
-                                <div className="pt-4">
+                                <div className="pt-4 space-y-4">
+                                  <Button 
+                                    type="button"
+                                    onClick={handleDownloadInvoice}
+                                    className="w-full h-auto py-5 text-lg gap-3 bg-primary hover:bg-primary/90 shadow-lg text-white font-bold whitespace-normal"
+                                    disabled={isDownloading}
+                                  >
+                                    {isDownloading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><FileText className="h-6 w-6 shrink-0" /> Descargar Factura Proforma</>}
+                                  </Button>
+
                                   <Button 
                                     type="button"
                                     onClick={handleRegisterAndWhatsApp}
-                                    className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white whitespace-normal text-center font-bold"
+                                    className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 shadow-lg text-white font-bold whitespace-normal"
                                     disabled={isSubmitting}
                                   >
-                                    {isSubmitting ? (
-                                      <Loader2 className="h-6 w-6 animate-spin" />
-                                    ) : (
-                                      <>
-                                        <MessageCircle className="h-6 w-6 shrink-0" /> 
-                                        <span className="flex-1">Confirmar por WhatsApp</span>
-                                      </>
-                                    )}
+                                    {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><MessageCircle className="h-6 w-6 shrink-0" /> Confirmar por WhatsApp</>}
                                   </Button>
-                                  <p className="text-[10px] text-center text-muted-foreground mt-4 px-2">
-                                    Tus datos se guardarán de forma segura en nuestro sistema y recibirás el ID de reserva por WhatsApp.
-                                  </p>
                                 </div>
                             </form>
                         </Form>
@@ -312,6 +326,50 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                     </div>
                 </CardContent>
             </Card>
+        </div>
+
+        {/* Factura Oculta para Generación de PDF */}
+        <div className="absolute left-[-9999px] top-[-9999px]">
+          <div ref={invoiceRef} className="p-10 bg-white text-black w-[210mm] font-sans">
+            <div className="flex justify-between items-center border-b-2 border-primary pb-6">
+              <div>
+                <h1 className="text-3xl font-bold text-primary">FACTURA PROFORMA</h1>
+                <p className="text-sm">Renta Cars ESA - Blues Group USA LLC</p>
+              </div>
+              <div className="text-right">
+                <p className="font-bold">ID Reserva: {orderId || 'PENDIENTE'}</p>
+                <p className="text-sm">Fecha: {format(new Date(), "dd/MM/yyyy")}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-10 my-8">
+              <div>
+                <h3 className="font-bold border-b mb-2">CLIENTE</h3>
+                <p className="text-sm uppercase">{form.getValues('name')} {form.getValues('lastName1')}</p>
+                <p className="text-sm">Pje: {form.getValues('passport')}</p>
+                <p className="text-sm">Lic: {form.getValues('driversLicense')}</p>
+                <p className="text-sm">País: {form.getValues('country')}</p>
+              </div>
+              <div>
+                <h3 className="font-bold border-b mb-2">DETALLES DE RENTA</h3>
+                <p className="text-sm">Vehículo: {car.name}</p>
+                <p className="text-sm">Días: {reservationDetails.rentalDays}</p>
+                <p className="text-sm">Desde: {formattedDates.start}</p>
+                <p className="text-sm">Hasta: {formattedDates.end}</p>
+              </div>
+            </div>
+            <div className="bg-gray-100 p-6 rounded">
+              <div className="flex justify-between mb-2"><span>Precio Renta ({reservationDetails.rentalDays} días):</span><span>${reservationDetails.rentPrice.toFixed(2)}</span></div>
+              <div className="flex justify-between mb-2"><span>Depósito de Garantía:</span><span>$250.00</span></div>
+              {form.getValues('paymentOption') === 'full_payment' && (
+                <div className="flex justify-between text-green-600 font-bold mb-2"><span>Descuento Pago Adelantado (20%):</span><span>-${reservationDetails.discountAmount.toFixed(2)}</span></div>
+              )}
+              <Separator className="my-4" />
+              <div className="flex justify-between text-xl font-bold"><span>MONTO TOTAL:</span><span>${amountToPay.toFixed(2)}</span></div>
+            </div>
+            <div className="mt-10 text-[10px] text-gray-500 italic">
+              * Esta es una factura proforma informativa. Para confirmar su reserva debe contactar con soporte vía WhatsApp proporcionando su ID de reserva. El depósito de garantía es reembolsable al finalizar la renta.
+            </div>
+          </div>
         </div>
     </div>
   );
