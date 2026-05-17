@@ -18,7 +18,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Loader2, MessageCircle, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -109,15 +108,20 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
         paymentOption: values.paymentOption,
         createdAt: serverTimestamp(),
       });
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error('Firestore Error:', e);
+      // Even if firestore fails, we proceed with the other actions to not block the user
+    }
   };
 
   const handleDownloadInvoice = async () => {
     const isValid = await form.trigger();
     if (!isValid) return;
+    
     setIsSubmittingInvoice(true);
     await registerInFirestore(orderId);
     
+    // Use a timeout to ensure React has rendered the values in the hidden invoice div
     setTimeout(async () => {
       if (invoiceRef.current) {
         try {
@@ -128,8 +132,11 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
           const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
           pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
           pdf.save(`Factura_${form.getValues('name')}_${orderId}.pdf`);
-          toast({ title: "Factura descargada." });
-        } catch (e) { toast({ variant: "destructive", title: "Error PDF." }); }
+          toast({ title: "Factura descargada con éxito." });
+        } catch (e) { 
+          console.error('PDF Error:', e);
+          toast({ variant: "destructive", title: "Error al generar el PDF." }); 
+        }
       }
       setIsSubmittingInvoice(false);
     }, 500);
@@ -138,8 +145,10 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
   const handleWhatsApp = async () => {
     const isValid = await form.trigger();
     if (!isValid) return;
+    
     setIsSubmittingWhatsApp(true);
     await registerInFirestore(orderId);
+    
     const msg = `¡Hola! Mi ID de pedido es: ${orderId}. Quiero confirmar mi reserva de auto.`;
     window.location.href = `https://wa.me/15879120936?text=${encodeURIComponent(msg)}`;
     setIsSubmittingWhatsApp(false);
@@ -195,10 +204,10 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                                     </FormItem>
                                 )}/>
                                 <div className="space-y-4 pt-4">
-                                    <Button type="button" onClick={handleDownloadInvoice} className="w-full h-auto py-5 text-lg gap-3 bg-primary hover:bg-primary/90 text-white font-bold text-wrap whitespace-normal" disabled={isSubmittingInvoice}>
+                                    <Button type="button" onClick={handleDownloadInvoice} className="w-full h-auto py-5 text-lg gap-3 bg-primary hover:bg-primary/90 text-white font-bold whitespace-normal" disabled={isSubmittingInvoice}>
                                         {isSubmittingInvoice ? <Loader2 className="h-6 w-6 animate-spin" /> : <><FileText className="h-6 w-6 shrink-0" /> Descargar Factura Proforma</>}
                                     </Button>
-                                    <Button type="button" onClick={handleWhatsApp} className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 text-white font-bold text-wrap whitespace-normal" disabled={isSubmittingWhatsApp}>
+                                    <Button type="button" onClick={handleWhatsApp} className="w-full h-auto py-5 text-lg gap-3 bg-green-600 hover:bg-green-700 text-white font-bold whitespace-normal" disabled={isSubmittingWhatsApp}>
                                         {isSubmittingWhatsApp ? <Loader2 className="h-6 w-6 animate-spin" /> : <><MessageCircle className="h-6 w-6 shrink-0" /> Confirmar por WhatsApp</>}
                                     </Button>
                                 </div>
@@ -245,18 +254,22 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
                 <div className="space-y-1 text-xs">
                   <p><span className="font-bold">Nombre:</span> {form.getValues('name')} {form.getValues('lastName1')}</p>
                   <p><span className="font-bold">Nacimiento:</span> {form.getValues('birthDay')}/{form.getValues('birthMonth')}/{form.getValues('birthYear')}</p>
+                  <p><span className="font-bold">WhatsApp:</span> {form.getValues('phone')}</p>
+                  <p><span className="font-bold">País:</span> {form.getValues('country')}</p>
+                  <p><span className="font-bold">Email:</span> {form.getValues('email')}</p>
                   <p><span className="font-bold">Pasaporte:</span> {form.getValues('passport')}</p>
                   <p><span className="font-bold">Licencia:</span> {form.getValues('driversLicense')}</p>
-                  <p><span className="font-bold">País:</span> {form.getValues('country')}</p>
+                  <p><span className="font-bold">Vuelo:</span> {form.getValues('flight') || 'N/A'}</p>
                 </div>
               </div>
               <div className="border border-primary/20 p-4 rounded-lg">
-                <h3 className="font-bold text-primary border-b-2 mb-3 pb-1 uppercase text-sm">Renta</h3>
+                <h3 className="font-bold text-primary border-b-2 mb-3 pb-1 uppercase text-sm">Detalles de Renta</h3>
                 <div className="space-y-1 text-xs">
                   <p><span className="font-bold">Vehículo:</span> {car.name}</p>
                   <p><span className="font-bold">Total Días:</span> {reservationDetails.rentalDays}</p>
-                  <p><span className="font-bold">Recogida:</span> {format(startDate, "dd/MM/yy")} - {pickupLocation}</p>
-                  <p><span className="font-bold">Entrega:</span> {format(endDate, "dd/MM/yy")} - {dropoffLocation}</p>
+                  <Separator className="my-1" />
+                  <p><span className="font-bold">Recogida:</span> {format(startDate, "dd/MM/yy", { locale: es })} - {pickupLocation}</p>
+                  <p><span className="font-bold">Devolución:</span> {format(endDate, "dd/MM/yy", { locale: es })} - {dropoffLocation}</p>
                 </div>
               </div>
             </div>
@@ -264,16 +277,34 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             <div className="bg-gray-50 p-6 rounded-lg border">
               <h3 className="font-bold text-primary mb-4 uppercase text-sm">Desglose de Costos</h3>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span>Renta:</span><span>${reservationDetails.rentPrice.toFixed(2)}</span></div>
-                <div className="flex justify-between"><span>Depósito (Reembolsable):</span><span>$250.00</span></div>
+                <div className="flex justify-between"><span>Costo de Renta ({reservationDetails.rentalDays} días):</span><span>${reservationDetails.rentPrice.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>Depósito de Garantía (Reembolsable):</span><span>$250.00</span></div>
+                <div className="flex justify-between font-bold border-t pt-2"><span>Total sin descuento:</span><span>$${(reservationDetails.rentPrice + 250).toFixed(2)}</span></div>
+                
                 {form.getValues('paymentOption') === 'full_payment' && (
-                  <div className="flex justify-between text-green-600"><span>Descuento (20%):</span><span>-${reservationDetails.discountAmount.toFixed(2)}</span></div>
+                  <div className="flex justify-between text-green-600 font-semibold italic"><span>Descuento por Pago Adelantado (20%):</span><span>-${reservationDetails.discountAmount.toFixed(2)}</span></div>
                 )}
+                
                 <Separator className="my-2" />
-                <div className="flex justify-between text-2xl font-bold text-primary"><span>TOTAL:</span><span>${amountToPay.toFixed(2)}</span></div>
+                <div className="flex justify-between text-2xl font-bold text-primary">
+                  <span>{form.getValues('paymentOption') === 'full_payment' ? 'TOTAL CON DESCUENTO:' : 'TOTAL A PAGAR:'}</span>
+                  <span>${amountToPay.toFixed(2)}</span>
+                </div>
               </div>
             </div>
-            <p className="mt-10 text-[10px] text-muted-foreground border-t pt-4">Esta es una factura proforma de Renta Cars ESA. El contrato final se firma en Cuba. El depósito de $250 es reembolsable si el vehículo se devuelve íntegro.</p>
+            
+            <div className="mt-8 border-t pt-4">
+              <h4 className="font-bold text-sm mb-2 uppercase">Opción de Pago Seleccionada:</h4>
+              <p className="text-xs bg-primary/5 p-3 rounded border border-primary/10 font-semibold">
+                {form.getValues('paymentOption') === 'full_payment' 
+                  ? "Pago Adelantado: Ahorras un 20% sobre el costo de la renta. Pagas el total hoy para asegurar tu tarifa." 
+                  : "Pago Posterior: Pagas el costo de la renta y el depósito al recibir el vehículo en Cuba."}
+              </p>
+            </div>
+            
+            <p className="mt-8 text-[10px] text-muted-foreground text-center border-t pt-4">
+              Esta es una factura proforma de Renta Cars ESA (Blues Group USA LLC). El contrato final de arrendamiento se firma físicamente en Cuba al recibir el vehículo. El depósito de $250.00 es reembolsable si el vehículo se devuelve íntegro.
+            </p>
           </div>
         </div>
     </div>
