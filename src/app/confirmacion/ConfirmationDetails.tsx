@@ -60,14 +60,16 @@ const formSchema = z.object({
 });
 
 export default function ConfirmationDetails({ car, startDate, endDate, pickupLocation, dropoffLocation, pickupTime, dropoffTime, reservationDetails }: ConfirmationDetailsProps) {
+  const [isMounted, setIsMounted] = useState(false);
+  const [orderId, setOrderId] = useState<string>('');
   const firestore = useFirestore();
   const { toast } = useToast();
   const invoiceRef = useRef<HTMLDivElement>(null);
-  const [orderId, setOrderId] = useState<string>('');
   const [isSubmittingWhatsApp, setIsSubmittingWhatsApp] = useState(false);
   const [isSubmittingInvoice, setIsSubmittingInvoice] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let res = '';
     for (let i = 0; i < 8; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -82,6 +84,15 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       paymentOption: 'deposit',
     },
   });
+
+  if (!isMounted) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="text-muted-foreground animate-pulse font-semibold">Preparando su confirmación...</p>
+      </div>
+    );
+  }
 
   const formData = form.watch();
   const amountToPay = formData.paymentOption === 'full_payment' ? reservationDetails.totalWithDiscount : (reservationDetails.rentPrice + 250);
@@ -121,7 +132,6 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     setIsSubmittingInvoice(true);
     await registerInFirestore(orderId);
     
-    // Pequeña pausa para asegurar que el elemento oculto esté actualizado con los datos del form
     setTimeout(async () => {
       if (invoiceRef.current) {
         try {
@@ -137,7 +147,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
           const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
           pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
           
-          const fileName = `Factura_${formData.name}_${orderId}.pdf`;
+          const fileName = `Factura_${formData.name}_${formData.lastName1}_${orderId}.pdf`;
           pdf.save(fileName);
           toast({ title: "Factura descargada con éxito." });
         } catch (e) { 
