@@ -7,8 +7,6 @@ import { es } from 'date-fns/locale';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { useFirestore } from '@/firebase/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -62,7 +60,6 @@ const formSchema = z.object({
 export default function ConfirmationDetails({ car, startDate, endDate, pickupLocation, dropoffLocation, pickupTime, dropoffTime, reservationDetails }: ConfirmationDetailsProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [orderId, setOrderId] = useState<string>('');
-  const firestore = useFirestore();
   const { toast } = useToast();
   const invoiceRef = useRef<HTMLDivElement>(null);
   const [isSubmittingWhatsApp, setIsSubmittingWhatsApp] = useState(false);
@@ -92,34 +89,6 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     ? (reservationDetails?.totalWithDiscount || 0) 
     : ((reservationDetails?.rentPrice || 0) + 250);
 
-  const performRegistry = () => {
-    if (!firestore || !orderId) return;
-    const values = form.getValues();
-    const docRef = doc(firestore, 'pedidos', orderId);
-    
-    setDoc(docRef, {
-        id: orderId,
-        customerName: `${values.name} ${values.lastName1} ${values.lastName2 || ''}`,
-        customerEmail: values.email,
-        customerPhone: values.phone,
-        customerPassport: values.passport,
-        customerLicense: values.driversLicense,
-        customerCountry: values.country,
-        customerDOB: `${values.birthDay}/${values.birthMonth}/${values.birthYear}`,
-        customerFlight: values.flight || 'N/A',
-        carName: car.name,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        pickupLocation, 
-        dropoffLocation,
-        totalAmount: amountToPay,
-        paymentOption: values.paymentOption,
-        createdAt: serverTimestamp(),
-    }, { merge: true }).catch(err => {
-      console.error("Error al registrar pedido:", err);
-    });
-  };
-
   const handleDownloadInvoice = async () => {
     const isValid = await form.trigger();
     if (!isValid) {
@@ -128,7 +97,6 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     }
     
     setIsSubmittingInvoice(true);
-    performRegistry();
     
     // Pequeño delay para asegurar que los datos estén renderizados en el div oculto
     setTimeout(async () => {
@@ -169,10 +137,9 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     
     setIsSubmittingWhatsApp(true);
     try {
-      performRegistry();
       const msg = `¡Hola! Mi ID de pedido es: ${orderId}. Quiero confirmar mi reserva de auto.`;
       const encodedMsg = encodeURIComponent(msg);
-      const whatsappUrl = `https://wa.me/15879120936?text=${encodedMsg}`;
+      const whatsappUrl = `https://wa.me/17407097677?text=${encodedMsg}`;
       window.open(whatsappUrl, '_blank');
       toast({ title: "Abriendo WhatsApp para confirmar..." });
     } catch (e) {

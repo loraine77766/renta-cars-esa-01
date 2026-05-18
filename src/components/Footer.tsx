@@ -23,12 +23,8 @@ export default function Footer() {
                 <Link href="/contactanos">Contáctanos</Link>
             </Button>
         </div>
-        <div className="pt-4 border-t border-border/50 text-[10px] flex justify-center items-center gap-2">
-          <span>Soporte Técnico: +1 (587) 912-0936</span>
-          <span className="opacity-30">|</span>
-          <Link href="/admin/pedidos" className="hover:text-primary transition-colors opacity-50 hover:opacity-100">
-            Registro Interno 2026
-          </Link>
+        <div className="pt-4 border-t border-border/50 text-[10px] flex justify-center items-center">
+          <span>Soporte Técnico: +1 (740) 709-7677</span>
         </div>
       </div>
     </footer>

@@ -83,7 +83,7 @@ export default function ReservationForm({ car }: { car: Car }) {
   const [reservationDetails, setReservationDetails] = useState<ReservationDetails | null>(null);
   
   useEffect(() => {
-    if (pickupDate && dropoffDate && dropoffDate > pickupDate) {
+    if (pickupDate && dropoffDate && dropoffDate >= pickupDate) {
       setReservationDetails(calculateReservationDetails(pickupDate, dropoffDate, car.pricePerDay));
       trigger("dropoffDate");
     } else {
@@ -92,11 +92,7 @@ export default function ReservationForm({ car }: { car: Car }) {
   }, [pickupDate, dropoffDate, trigger, car.pricePerDay]);
 
 
-  const minRentDaysString = car.details?.notes.find(n => n.includes('Mínimo de renta'));
-  const minRentDaysMatch = minRentDaysString ? minRentDaysString.match(/\d+/) : null;
-  const minRentDays = minRentDaysMatch ? parseInt(minRentDaysMatch[0], 10) : 1; // Default to 1 if not specified
-
-  const isDateRangeValid = !!reservationDetails && reservationDetails.rentalDays > 0 && reservationDetails.rentalDays >= minRentDays;
+  const isDateRangeValid = !!reservationDetails && reservationDetails.rentalDays > 0;
   
   const imageList = car.imageUrls && car.imageUrls.length > 0 ? car.imageUrls : [car.imageUrl];
 
@@ -363,13 +359,7 @@ export default function ReservationForm({ car }: { car: Car }) {
                     </Card>
                 </CardContent>
             )}
-             {!isDateRangeValid && reservationDetails && reservationDetails.rentalDays > 0 && (
-                <CardFooter className="p-6 pt-0">
-                    <p className="text-destructive text-sm text-center w-full bg-destructive/10 p-2 rounded-md">
-                        Este auto requiere un mínimo de {minRentDays} días de renta.
-                    </p>
-                </CardFooter>
-            )}
+
         </Card>
       </div>
 
