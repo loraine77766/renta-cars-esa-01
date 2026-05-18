@@ -277,7 +277,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span>Costo de Renta ({reservationDetails.rentalDays} días):</span><span>${reservationDetails.rentPrice.toFixed(2)}</span></div>
                 <div className="flex justify-between"><span>Depósito de Garantía (Reembolsable):</span><span>$250.00</span></div>
-                <div className="flex justify-between font-bold border-t pt-2"><span>Total sin descuento:</span><span>$${(reservationDetails.rentPrice + 250).toFixed(2)}</span></div>
+                <div className="flex justify-between font-bold border-t pt-2"><span>Total sin descuento:</span><span>${(reservationDetails.rentPrice + 250).toFixed(2)}</span></div>
                 
                 {form.getValues('paymentOption') === 'full_payment' && (
                   <div className="flex justify-between text-green-600 font-semibold italic"><span>Descuento por Pago Adelantado (20%):</span><span>-${reservationDetails.discountAmount.toFixed(2)}</span></div>
