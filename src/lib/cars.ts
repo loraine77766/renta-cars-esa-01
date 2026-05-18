@@ -237,7 +237,7 @@ export const cars: Car[] = [
     pricePerDay: 105,
     imageUrl: '/images/images/hyundai-santa-fe.jpg',
     imageHint: 'suv luxury silver',
-    features: ['5 Pasajeros', 'Transmisión Automática', 'Motor Potente', 'Espacio Amplio', 'Chapa ESA'],
+    features: ['7 Pasajeros', 'Transmisión Automática', 'Motor Potente', 'Espacio Amplio', 'Chapa ESA'],
     details: {
       additionalCharges: ['Pagos electrónicos obligatorios.'],
       notIncluded: ['Depósito de garantía ($250).'],

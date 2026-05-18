@@ -97,7 +97,6 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     const values = form.getValues();
     const docRef = doc(firestore, 'pedidos', orderId);
     
-    // Escritura no bloqueante para mayor fluidez
     setDoc(docRef, {
         id: orderId,
         customerName: `${values.name} ${values.lastName1} ${values.lastName2 || ''}`,
@@ -131,13 +130,15 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     setIsSubmittingInvoice(true);
     performRegistry();
     
+    // Pequeño delay para asegurar que los datos estén renderizados en el div oculto
     setTimeout(async () => {
       if (invoiceRef.current) {
         try {
           const canvas = await html2canvas(invoiceRef.current, { 
             scale: 2, 
             useCORS: true,
-            logging: false 
+            logging: false,
+            backgroundColor: '#ffffff'
           });
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
@@ -152,8 +153,11 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
         } finally {
           setIsSubmittingInvoice(false);
         }
+      } else {
+        setIsSubmittingInvoice(false);
+        toast({ variant: "destructive", title: "Error técnico: no se encontró el elemento de factura." });
       }
-    }, 500);
+    }, 800);
   };
 
   const handleWhatsApp = async () => {
@@ -169,10 +173,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       const msg = `¡Hola! Mi ID de pedido es: ${orderId}. Quiero confirmar mi reserva de auto.`;
       const encodedMsg = encodeURIComponent(msg);
       const whatsappUrl = `https://wa.me/15879120936?text=${encodedMsg}`;
-      
-      // Apertura en pestaña nueva para evitar crasheos de la página actual
       window.open(whatsappUrl, '_blank');
-      
       toast({ title: "Abriendo WhatsApp para confirmar..." });
     } catch (e) {
       console.error(e);
@@ -283,12 +284,12 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             </Card>
         </div>
 
-        {/* FACTURA PARA PDF (OCULTA) */}
-        <div className="opacity-0 pointer-events-none fixed" style={{ left: '-3000px', top: '-3000px' }}>
-          <div ref={invoiceRef} className="p-10 bg-white text-black font-sans" style={{ width: '210mm' }}>
-            <div className="flex justify-between items-center border-b-4 border-primary pb-6 mb-8">
+        {/* FACTURA PARA PDF (OCULTA PERO RENDERIZADA) */}
+        <div style={{ position: 'absolute', left: '-5000px', top: '0' }}>
+          <div ref={invoiceRef} className="p-10 bg-white text-black font-sans" style={{ width: '210mm', minHeight: '297mm' }}>
+            <div className="flex justify-between items-center border-b-4 border-blue-900 pb-6 mb-8">
               <div>
-                <h1 className="text-4xl font-bold text-primary">FACTURA PROFORMA</h1>
+                <h1 className="text-4xl font-bold text-blue-900">FACTURA PROFORMA</h1>
                 <p className="text-md font-semibold mt-1">Renta Cars ESA - Blues Group USA LLC</p>
               </div>
               <div className="text-right">
@@ -298,53 +299,59 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             </div>
             
             <div className="grid grid-cols-2 gap-10 mb-8">
-              <div className="border border-primary/20 p-4 rounded-lg">
-                <h3 className="font-bold text-primary border-b-2 mb-3 pb-1 uppercase text-sm">Conductor</h3>
+              <div className="border border-blue-900/20 p-4 rounded-lg">
+                <h3 className="font-bold text-blue-900 border-b-2 mb-3 pb-1 uppercase text-sm">Conductor</h3>
                 <div className="space-y-1 text-xs">
-                  <p><span className="font-bold">Nombre:</span> {formData.name} {formData.lastName1}</p>
+                  <p><span className="font-bold">Nombre:</span> {formData.name} {formData.lastName1} {formData.lastName2}</p>
                   <p><span className="font-bold">WhatsApp:</span> {formData.phone}</p>
                   <p><span className="font-bold">País:</span> {formData.country}</p>
                   <p><span className="font-bold">Pasaporte:</span> {formData.passport}</p>
                   <p><span className="font-bold">Licencia:</span> {formData.driversLicense}</p>
+                  <p><span className="font-bold">Email:</span> {formData.email}</p>
                 </div>
               </div>
-              <div className="border border-primary/20 p-4 rounded-lg">
-                <h3 className="font-bold text-primary border-b-2 mb-3 pb-1 uppercase text-sm">Detalles Renta</h3>
+              <div className="border border-blue-900/20 p-4 rounded-lg">
+                <h3 className="font-bold text-blue-900 border-b-2 mb-3 pb-1 uppercase text-sm">Detalles Renta</h3>
                 <div className="space-y-1 text-xs">
                   <p><span className="font-bold">Vehículo:</span> {car.name}</p>
                   <p><span className="font-bold">Días:</span> {reservationDetails.rentalDays}</p>
-                  <p><span className="font-bold">Recogida:</span> {format(startDate, "dd/MM/yy", { locale: es })}</p>
-                  <p><span className="font-bold">Devolución:</span> {format(endDate, "dd/MM/yy", { locale: es })}</p>
+                  <p><span className="font-bold">Recogida:</span> {format(startDate, "dd/MM/yy", { locale: es })} ({pickupLocation})</p>
+                  <p><span className="font-bold">Devolución:</span> {format(endDate, "dd/MM/yy", { locale: es })} ({dropoffLocation})</p>
                 </div>
               </div>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-lg border">
-              <h3 className="font-bold text-primary mb-4 uppercase text-sm">Desglose</h3>
+              <h3 className="font-bold text-blue-900 mb-4 uppercase text-sm">Desglose de Pago</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Costo Renta:</span>
+                  <span>Costo Renta ({reservationDetails.rentalDays} días):</span>
                   <span>${reservationDetails.rentPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Depósito Garantía:</span>
+                  <span>Depósito Garantía (Reembolsable):</span>
                   <span>$250.00</span>
                 </div>
                 {formData.paymentOption === 'full_payment' && (
                   <div className="flex justify-between text-green-600 font-semibold italic border-t pt-1">
-                    <span>Descuento Adelantado (20%):</span>
+                    <span>Descuento Pago Adelantado (20%):</span>
                     <span>-${reservationDetails.discountAmount.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-2xl font-bold text-primary border-t-2 border-primary pt-2 mt-2">
-                  <span>TOTAL:</span>
+                <div className="flex justify-between text-2xl font-bold text-blue-900 border-t-2 border-blue-900 pt-2 mt-2">
+                  <span>TOTAL A PAGAR:</span>
                   <span>${amountToPay.toFixed(2)}</span>
                 </div>
               </div>
             </div>
             
-            <p className="mt-8 text-[10px] text-muted-foreground text-center border-t pt-4">
-              Factura proforma emitida por Renta Cars ESA. El contrato final se firma en Cuba. Depósito de $250 reembolsable.
+            <div className="mt-10 p-4 border rounded bg-blue-50 text-[11px]">
+              <h4 className="font-bold mb-1">Notas Legales:</h4>
+              <p>Factura proforma emitida por Renta Cars ESA. El contrato final se firma en Cuba. El depósito de $250 es reembolsable al entregar el auto en perfectas condiciones. Blues Group USA LLC actúa como intermediario oficial.</p>
+            </div>
+
+            <p className="mt-8 text-[9px] text-center text-gray-400">
+               Blues Group USA LLC | 1317 EDGEWATER DR UNIT 1858 ORLANDO, FL 32804 | info@bluesgroupusa.com
             </p>
           </div>
         </div>
