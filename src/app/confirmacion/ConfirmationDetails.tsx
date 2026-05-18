@@ -97,6 +97,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     const values = form.getValues();
     const docRef = doc(firestore, 'pedidos', orderId);
     
+    // Escritura no bloqueante para mayor fluidez
     setDoc(docRef, {
         id: orderId,
         customerName: `${values.name} ${values.lastName1} ${values.lastName2 || ''}`,
@@ -133,7 +134,11 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
     setTimeout(async () => {
       if (invoiceRef.current) {
         try {
-          const canvas = await html2canvas(invoiceRef.current, { scale: 2, useCORS: true });
+          const canvas = await html2canvas(invoiceRef.current, { 
+            scale: 2, 
+            useCORS: true,
+            logging: false 
+          });
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
           const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -144,9 +149,10 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
         } catch (e) { 
           console.error(e);
           toast({ variant: "destructive", title: "Error al generar el PDF de la factura." }); 
+        } finally {
+          setIsSubmittingInvoice(false);
         }
       }
-      setIsSubmittingInvoice(false);
     }, 500);
   };
 
@@ -164,7 +170,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
       const encodedMsg = encodeURIComponent(msg);
       const whatsappUrl = `https://wa.me/15879120936?text=${encodedMsg}`;
       
-      // Usar window.open en lugar de location.href para evitar crasheos de navegación
+      // Apertura en pestaña nueva para evitar crasheos de la página actual
       window.open(whatsappUrl, '_blank');
       
       toast({ title: "Abriendo WhatsApp para confirmar..." });
@@ -277,8 +283,8 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             </Card>
         </div>
 
-        {/* FACTURA PARA PDF (FUERA DE PANTALLA) */}
-        <div className="opacity-0 pointer-events-none fixed" style={{ left: '-2000px', top: '-2000px' }}>
+        {/* FACTURA PARA PDF (OCULTA) */}
+        <div className="opacity-0 pointer-events-none fixed" style={{ left: '-3000px', top: '-3000px' }}>
           <div ref={invoiceRef} className="p-10 bg-white text-black font-sans" style={{ width: '210mm' }}>
             <div className="flex justify-between items-center border-b-4 border-primary pb-6 mb-8">
               <div>

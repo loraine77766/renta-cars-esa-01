@@ -229,5 +229,21 @@ export const cars: Car[] = [
       pickupAndDropoff: ['Tolerancia de 4 horas para la devolución.'],
       notes: ['Mínimo: 3 días.', 'Seguro: $30/día.', 'Consumo: 14-16 km/litro.']
     }
+  },
+  {
+    id: 23,
+    name: 'Hyundai Santa Fe',
+    description: 'SUV de lujo potente y espacioso, perfecto para largos recorridos con el máximo confort.',
+    pricePerDay: 105,
+    imageUrl: '/images/images/hyundai-santa-fe.jpg',
+    imageHint: 'suv luxury silver',
+    features: ['5 Pasajeros', 'Transmisión Automática', 'Motor Potente', 'Espacio Amplio', 'Chapa ESA'],
+    details: {
+      additionalCharges: ['Pagos electrónicos obligatorios.'],
+      notIncluded: ['Depósito de garantía ($250).'],
+      included: ['Seguro a todo riesgo.', 'Kilometraje libre.'],
+      pickupAndDropoff: ['Tolerancia horaria estándar de 4h.'],
+      notes: ['Mínimo: 3 días.', 'Seguro premium incluido.', 'Confort superior.']
+    }
   }
 ];
