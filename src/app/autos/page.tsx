@@ -1,7 +1,7 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import AiRecommender from '@/components/AiRecommender';
+
 import { CarList } from '@/components/CarList';
 import { cars } from '@/lib/cars';
 
@@ -16,11 +16,9 @@ export default function AutosPage() {
                 Encuentra tu Auto Ideal
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                Explora nuestra flota de vehículos o déjate asesorar por nuestra inteligencia artificial para encontrar el auto perfecto para tu viaje en Cuba.
+                Explora nuestra flota de vehículos para encontrar el auto perfecto para tu viaje en Cuba.
             </p>
         </section>
-
-        <AiRecommender />
 
         <section id="cars" className="my-12">
           <h2 className="font-headline text-3xl font-bold text-center mb-8 text-primary">Nuestra Flota</h2>

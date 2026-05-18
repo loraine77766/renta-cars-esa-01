@@ -1,6 +1,8 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useSearchParams, useRouter } from 'next/navigation';
 import { isValid, parseISO } from 'date-fns';
-import type { Metadata } from 'next';
+import { Suspense, useEffect, useMemo } from 'react';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,63 +11,53 @@ import ConfirmationDetails from '@/app/confirmacion/ConfirmationDetails';
 import { calculateReservationDetails } from '@/lib/utils';
 import type { ReservationDetails as ReservationDetailsType } from '@/lib/types';
 
-export default async function ConfirmationPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  const carId = Array.isArray(params.carId) ? params.carId[0] : params.carId;
-  const from = Array.isArray(params.from) ? params.from[0] : params.from;
-  const to = Array.isArray(params.to) ? params.to[0] : params.to;
-  const pickupLocation = Array.isArray(params.pickupLocation) ? params.pickupLocation[0] : params.pickupLocation;
-  const dropoffLocation = Array.isArray(params.dropoffLocation) ? params.dropoffLocation[0] : params.dropoffLocation;
-  const pickupTime = Array.isArray(params.pickupTime) ? params.pickupTime[0] : params.pickupTime;
-  const dropoffTime = Array.isArray(params.dropoffTime) ? params.dropoffTime[0] : params.dropoffTime;
+function ConfirmationContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  if (
-    !carId || 
-    !from || 
-    !to || 
-    !pickupLocation || 
-    !dropoffLocation || 
-    !pickupTime || 
-    !dropoffTime
-  ) {
-    redirect('/');
-  }
+  const params = useMemo(() => ({
+    carId: searchParams.get('carId'),
+    from: searchParams.get('from'),
+    to: searchParams.get('to'),
+    pickupLocation: searchParams.get('pickupLocation'),
+    dropoffLocation: searchParams.get('dropoffLocation'),
+    pickupTime: searchParams.get('pickupTime'),
+    dropoffTime: searchParams.get('dropoffTime'),
+  }), [searchParams]);
 
-  const car = cars.find(c => c.id === parseInt(carId, 10));
-  if (!car) {
-    redirect('/');
-  }
+  const data = useMemo(() => {
+    const { carId, from, to, pickupLocation, dropoffLocation, pickupTime, dropoffTime } = params;
+    if (!carId || !from || !to || !pickupLocation || !dropoffLocation || !pickupTime || !dropoffTime)
+      return { valid: false } as const;
+    const car = cars.find(c => c.id === parseInt(carId, 10));
+    if (!car) return { valid: false } as const;
+    const startDate = parseISO(from);
+    const endDate = parseISO(to);
+    if (!isValid(startDate) || !isValid(endDate)) return { valid: false } as const;
+    const reservationDetails = calculateReservationDetails(startDate, endDate, car.pricePerDay);
+    if (!reservationDetails) return { valid: false } as const;
+    return { valid: true as const, car, startDate, endDate, pickupLocation, dropoffLocation, pickupTime, dropoffTime, reservationDetails };
+  }, [params]);
 
-  const startDate = parseISO(from);
-  const endDate = parseISO(to);
+  useEffect(() => {
+    if (!data.valid) router.replace('/');
+  }, [data.valid, router]);
 
-  if (!isValid(startDate) || !isValid(endDate)) {
-    redirect('/');
-  }
-  
-  const reservationDetails: ReservationDetailsType | null = calculateReservationDetails(startDate, endDate, car.pricePerDay);
+  if (!data.valid) return null;
 
-  if (!reservationDetails) {
-     redirect('/');
-  }
-  
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <ConfirmationDetails 
-          car={car}
-          startDate={startDate}
-          endDate={endDate}
-          pickupLocation={pickupLocation}
-          dropoffLocation={dropoffLocation}
-          pickupTime={pickupTime}
-          dropoffTime={dropoffTime}
-          reservationDetails={reservationDetails}
+        <ConfirmationDetails
+          car={data.car}
+          startDate={data.startDate}
+          endDate={data.endDate}
+          pickupLocation={data.pickupLocation}
+          dropoffLocation={data.dropoffLocation}
+          pickupTime={data.pickupTime}
+          dropoffTime={data.dropoffTime}
+          reservationDetails={data.reservationDetails}
         />
       </main>
       <Footer />
@@ -73,3 +65,10 @@ export default async function ConfirmationPage({
   );
 }
 
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="flex flex-col min-h-screen items-center justify-center"><p>Cargando...</p></div>}>
+      <ConfirmationContent />
+    </Suspense>
+  );
+}

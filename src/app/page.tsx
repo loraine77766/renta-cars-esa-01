@@ -1,7 +1,7 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import AiRecommender from '@/components/AiRecommender';
+
 import { CarList } from '@/components/CarList';
 import { cars } from '@/lib/cars';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
