@@ -9,18 +9,19 @@ import ConfirmationDetails from '@/app/confirmacion/ConfirmationDetails';
 import { calculateReservationDetails } from '@/lib/utils';
 import type { ReservationDetails as ReservationDetailsType } from '@/lib/types';
 
-export default function ConfirmationPage({
+export default async function ConfirmationPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const carId = Array.isArray(searchParams.carId) ? searchParams.carId[0] : searchParams.carId;
-  const from = Array.isArray(searchParams.from) ? searchParams.from[0] : searchParams.from;
-  const to = Array.isArray(searchParams.to) ? searchParams.to[0] : searchParams.to;
-  const pickupLocation = Array.isArray(searchParams.pickupLocation) ? searchParams.pickupLocation[0] : searchParams.pickupLocation;
-  const dropoffLocation = Array.isArray(searchParams.dropoffLocation) ? searchParams.dropoffLocation[0] : searchParams.dropoffLocation;
-  const pickupTime = Array.isArray(searchParams.pickupTime) ? searchParams.pickupTime[0] : searchParams.pickupTime;
-  const dropoffTime = Array.isArray(searchParams.dropoffTime) ? searchParams.dropoffTime[0] : searchParams.dropoffTime;
+  const params = await searchParams;
+  const carId = Array.isArray(params.carId) ? params.carId[0] : params.carId;
+  const from = Array.isArray(params.from) ? params.from[0] : params.from;
+  const to = Array.isArray(params.to) ? params.to[0] : params.to;
+  const pickupLocation = Array.isArray(params.pickupLocation) ? params.pickupLocation[0] : params.pickupLocation;
+  const dropoffLocation = Array.isArray(params.dropoffLocation) ? params.dropoffLocation[0] : params.dropoffLocation;
+  const pickupTime = Array.isArray(params.pickupTime) ? params.pickupTime[0] : params.pickupTime;
+  const dropoffTime = Array.isArray(params.dropoffTime) ? params.dropoffTime[0] : params.dropoffTime;
 
   if (
     !carId || 
@@ -71,3 +72,4 @@ export default function ConfirmationPage({
     </div>
   );
 }
+
