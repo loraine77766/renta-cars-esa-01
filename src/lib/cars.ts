@@ -245,5 +245,21 @@ export const cars: Car[] = [
       pickupAndDropoff: ['Tolerancia horaria estándar de 4h.'],
       notes: ['Mínimo: 3 días.', 'Seguro premium incluido.', 'Confort superior.']
     }
+  },
+  {
+    id: 24,
+    name: 'Hyundai H1',
+    description: 'Minibús para grupos grandes, ideal para hasta 12 pasajeros con aire acondicionado potente y motor diésel de gran rendimiento.',
+    pricePerDay: 220,
+    imageUrl: '/images/images/Hyundai H1.png',
+    imageHint: 'minibus white',
+    features: ['12 Pasajeros', 'Manual', 'Diésel', 'A/C Potente', '5 Puertas', 'Chapa ESA'],
+    details: {
+      additionalCharges: ['Pagos en oficina solo con tarjeta.'],
+      notIncluded: ['Depósito de garantía ($250).'],
+      included: ['Seguro diario.', 'Kilometraje libre.'],
+      pickupAndDropoff: ['Tolerancia de 4 horas.'],
+      notes: ['Mínimo: 3 días.', 'Seguro: $45/día.', 'Combustible: diésel.', 'Motor 2.5L CRDi.', 'Consumo: 8.5-9.8 L/100km.', 'Autonomía: ~800 km.']
+    }
   }
 ];
