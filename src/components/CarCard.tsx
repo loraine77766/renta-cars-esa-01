@@ -3,77 +3,53 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { AlertCircle } from 'lucide-react';
 import type { Car as CarType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from './ui/badge';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 interface CarCardProps {
   car: CarType;
 }
 
 export function CarCard({ car }: CarCardProps) {
-  const requiresMinDays = car.details?.notes.some(n => n.includes('Mínimo de renta'));
-  
   return (
-    <Card className="flex flex-col overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="p-0">
-        <div className="relative h-48 w-full">
-          <Image
-            src={car.imageUrl}
-            alt={car.name}
-            data-ai-hint={car.imageHint}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="p-4">
-            <div className="flex justify-between items-start">
-              <CardTitle className="font-headline text-xl text-primary">{car.name}</CardTitle>
-              {requiresMinDays && (
-                 <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <AlertCircle className="h-5 w-5 text-muted-foreground cursor-pointer" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p>{car.details?.notes.find(n => n.includes('Mínimo de renta'))}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
-            <CardDescription>{car.description}</CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-grow p-4 space-y-4">
-        <div className="flex flex-wrap gap-2">
-            {car.features.map((feature) => (
-                <Badge key={feature} variant="secondary">{feature}</Badge>
-            ))}
-        </div>
-        
-        <div className="flex justify-end items-baseline gap-2 text-primary">
+    <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+      <div className="relative h-52 w-full overflow-hidden">
+        <Image
+          src={car.imageUrl}
+          alt={car.name}
+          data-ai-hint={car.imageHint}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+          <h3 className="font-headline text-xl font-bold text-white drop-shadow-lg">{car.name}</h3>
+          <div className="flex items-baseline gap-1 bg-white/90 dark:bg-gray-800/90 px-3 py-1 rounded-lg">
             {car.originalPricePerDay && (
-                <span className="text-muted-foreground line-through text-lg">${car.originalPricePerDay}</span>
+              <span className="text-xs text-gray-500 line-through">${car.originalPricePerDay}</span>
             )}
-            <span className="font-headline text-2xl font-bold">${car.pricePerDay}</span>
+            <span className="font-headline text-lg font-bold text-accent">${car.pricePerDay}</span>
+            <span className="text-xs text-gray-500">/día</span>
+          </div>
         </div>
-      </CardContent>
-      <CardFooter className="p-4 bg-gray-50 dark:bg-gray-800/20">
-        <Button asChild className="w-full bg-accent hover:bg-accent/90">
+      </div>
+      <div className="p-4 space-y-3">
+        <p className="text-sm text-muted-foreground line-clamp-2">{car.description}</p>
+        <div className="flex flex-wrap gap-1.5">
+            {car.features.slice(0, 4).map((feature) => (
+                <Badge key={feature} variant="secondary" className="text-xs font-normal">{feature}</Badge>
+            ))}
+            {car.features.length > 4 && (
+                <Badge variant="outline" className="text-xs">+{car.features.length - 4}</Badge>
+            )}
+        </div>
+        <Button asChild className="w-full bg-accent hover:bg-accent/90 rounded-lg">
             <Link href={`/reserva?carId=${car.id}`}>
                 Rentar Ahora
             </Link>
         </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }
