@@ -251,7 +251,7 @@ export const cars: Car[] = [
     name: 'Hyundai H1',
     description: 'Minibús para grupos grandes, ideal para hasta 12 pasajeros con aire acondicionado potente y motor diésel de gran rendimiento.',
     pricePerDay: 220,
-    imageUrl: '/images/images/Hyundai H1.png',
+    imageUrl: '/images/images/Hyundai-H1.jpg',
     imageHint: 'minibus white',
     features: ['12 Pasajeros', 'Manual', 'Diésel', 'A/C Potente', '5 Puertas', 'Chapa ESA'],
     details: {
