@@ -318,7 +318,7 @@ export default function ConfirmationDetails({ car, startDate, endDate, pickupLoc
             </div>
 
             <p className="mt-8 text-[9px] text-center text-gray-400">
-               Blues Group USA LLC | 1317 EDGEWATER DR UNIT 1858 ORLANDO, FL 32804 | info@bluesgroupusa.com
+               Blues Group USA LLC | 1317 EDGEWATER DR UNIT 1858 ORLANDO, FL 32804
             </p>
           </div>
         </div>

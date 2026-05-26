@@ -24,7 +24,6 @@ export default function TerminosYCondicionesPage() {
                     <p><strong>Dirección Postal:</strong> 1317 EDGEWATER DR UNIT 1858 ORLANDO, FL 32804</p>
                     <p><strong>Contacto para Servicio, Soporte, Compras y Devoluciones:</strong></p>
                     <ul>
-                        <li>Email: <a href="mailto:info@bluesgroupusa.com">info@bluesgroupusa.com</a></li>
                         <li>WhatsApp y Teléfono: <a href="https://wa.me/15879120936">+1 (587) 912-0936</a></li>
                     </ul>
                 </div>
@@ -182,7 +181,7 @@ export default function TerminosYCondicionesPage() {
                 <p>Las reclamaciones por los pagos realizados con tarjeta, para evitar las penalidades infringiendo el actual contrato conlleva a la inscripción en la lista de no gratos, el cliente no podrá reservar en futuro otro auto en el destino y corre el riesgo de ser bloqueado por la policía aduanal.</p>
                 
                 <h3 className="font-headline text-xl text-primary">RECLAMACIONES Y REEMBOLSOS</h3>
-                <p>Las reclamaciones solo se aceptarán de forma escrita a la dirección info@bluesgroupusa.com con copia del contrato emitido por la rentadora, con las evidencias pertinentes.</p>
+                <p>Las reclamaciones solo se aceptarán de forma escrita con copia del contrato emitido por la rentadora, con las evidencias pertinentes.</p>
                 <p>El cliente debe comunicarse con Blues Group USA LLC en tiempo real para poder darle asistencia o ponerse en contacto con nuestro representante.</p>
                 <p>Para hacer la reclamación el cliente debe exigir copia del contrato con anotación del inconveniente.</p>
                 <p>Blues Group USA LLC reembolsará la diferencia del costo del auto en el caso que al cliente venga entregado un auto de categoría inferior a la reservada siempre y cuando haga la señalización en el momento que está retirando el auto directamente a Blues Group USA LLC o al representante correspondiente. Debe estar señalado en la copia del contrato que nos debe enviar.</p>

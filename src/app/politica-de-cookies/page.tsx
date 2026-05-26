@@ -50,7 +50,7 @@ export default function PoliticaDeCookiesPage() {
                 </div>
 
                 <p>
-                    Si tiene más preguntas, puede enviar un correo electrónico a: <a href="mailto:info@RentaCarsESA.com" className="text-accent hover:underline">info@RentaCarsESA.com</a>.
+                    Si tiene más preguntas, puede contactarnos por WhatsApp.
                 </p>
             </CardContent>
         </Card>
