@@ -19,7 +19,7 @@ export default function PreguntasFrecuentesPage() {
                     Renta Cars ESA es una empresa llena de experiencias, donde te ayudamos a encontrar y rentar tu Auto en Cuba a los precios más acogedores del mercado.
                 </p>
                 <p>
-                    Ubicada en una de las ciudades más emblemáticas de Europa en Italia, que ofrece un servicio distinto a las demás Agencias de viaje. Nos preocupamos por las necesidades reales de nuestros clientes.
+                    Nos preocupamos por las necesidades reales de nuestros clientes.
                 </p>
 
                 <h3 className="font-headline text-2xl text-primary text-center pt-4">Nuestro objetivo</h3>
